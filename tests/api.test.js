@@ -40,7 +40,7 @@ describe('API and session isolation', () => {
     await expect(apiFetch('/api/v1/config')).rejects.toMatchObject({ code: 'NETWORK_ERROR' });
   });
   it('login and register use neutral contracts without role input', async () => {
-    const user = { id: 1, name: 'Member', role: 'member', active: true };
+    const user = { id: 1, name: 'Member', role: 'employee', active: true };
     const fetch = vi.fn().mockImplementation(async () => response({ access_token: 'valid', user })); vi.stubGlobal('fetch', fetch);
     expect(await login('member@example.com', 'password')).toEqual(user);
     expect(await register('Member', 'member@example.com', 'password')).toEqual(user);

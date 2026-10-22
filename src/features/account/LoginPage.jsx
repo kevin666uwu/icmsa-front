@@ -12,7 +12,7 @@ export default function LoginPage({ session }) {
     action.run(async () => {
       if (register && data.get('password') !== data.get('confirmPassword')) throw new Error('Las contraseñas no coinciden.');
       const user = register ? await session.signUp(data.get('name'), data.get('email'), data.get('password')) : await session.signIn(data.get('email'), data.get('password'));
-      navigate(user.email_verification_enabled && !user.email_verified ? '/verify-email' : user.role === 'admin' ? '/admin' : '/portal');
+      navigate(user.email_verification_enabled && !user.email_verified ? '/verify-email' : '/portal');
     });
   }}>
     {register && <Input label="Nombre" name="name" required maxLength={120} autoComplete="name" />}

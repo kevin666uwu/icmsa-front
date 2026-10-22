@@ -31,10 +31,10 @@ describe('Accessible UI and protected routes', () => {
   });
   it('enforces generic roles and active state', () => {
     expect(canAccessRoute('/portal', null)).toBe(false);
-    expect(canAccessRoute('/portal', { active: true, role: 'member' })).toBe(true);
-    expect(canAccessRoute('/admin', { active: true, role: 'member' })).toBe(false);
-    expect(canAccessRoute('/admin', { active: true, role: 'admin' })).toBe(true);
-    expect(canAccessRoute('/admin', { active: false, role: 'admin' })).toBe(false);
+    expect(canAccessRoute('/portal', { active: true, role: 'employee' })).toBe(true);
+    expect(canAccessRoute('/admin', { active: true, role: 'employee' })).toBe(false);
+    expect(canAccessRoute('/admin', { active: true, role: 'super_admin' })).toBe(true);
+    expect(canAccessRoute('/admin', { active: false, role: 'super_admin' })).toBe(false);
   });
   it('does not trust a cached token before server verification', async () => {
     window.history.replaceState({}, '', '/admin');saveSession('unverified');
@@ -44,7 +44,7 @@ describe('Accessible UI and protected routes', () => {
     expect(screen.getByText('Comprobando sesión…')).toBeInTheDocument();
     expect(screen.queryByText('Administración de usuarios')).not.toBeInTheDocument();
     await waitFor(() => expect(resolve).toBeTypeOf('function'));
-    resolve(new Response(JSON.stringify({ id: 1, role: 'member', active: true }), { headers: { 'Content-Type': 'application/json' } }));
+    resolve(new Response(JSON.stringify({ id: 1, role: 'employee', active: true }), { headers: { 'Content-Type': 'application/json' } }));
     expect(await screen.findByText('No tienes permisos para acceder a esta sección.')).toBeInTheDocument();
   });
   it('cancels stale loads so old results cannot replace new ones', async () => {

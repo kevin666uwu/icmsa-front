@@ -1,7 +1,7 @@
 {
-  "name": "web-model-v1-frontend",
+  "name": "icmsa-front",
   "private": true,
-  "version": "1.1.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -35,7 +35,7 @@ export default function EmailVerificationForm({ session }) {
   if (remote.error) return <ErrorState message={remote.error} onRetry={remote.refresh} />;
   const verified = state?.email_verified || session.user?.email_verified;
   return <div className="narrow"><Card><h1>Verifica tu correo</h1>
-    {verified ? <><p role="status">Correo verificado.</p><Button onClick={() => navigate(session.user?.role === 'admin' ? '/admin' : '/portal')}>Continuar</Button></> : <>
+    {verified ? <><p role="status">Correo verificado.</p><Button onClick={() => navigate(session.user?.role === 'super_admin' ? '/admin' : '/portal')}>Continuar</Button></> : <>
       <p>{state?.delivery_status === 'sent' ? 'Enviamos un código de 6 dígitos a tu correo.' :
         state?.delivery_status === 'not_requested' ? 'Solicita un código para verificar tu correo.' :
         'No podemos confirmar el envío. Revisa tu correo o solicita otro código cuando termine la espera.'}</p>

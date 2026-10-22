@@ -6,7 +6,7 @@ import * as service from '../src/services/emailVerification.service.js';
 vi.mock('../src/services/emailVerification.service.js', () => ({
   verificationStatus: vi.fn(), requestVerification: vi.fn(), verifyEmailCode: vi.fn(),
 }));
-const session = () => ({ user: { id: 1, role: 'member', active: true }, refresh: vi.fn().mockResolvedValue({}) });
+const session = () => ({ user: { id: 1, role: 'employee', active: true }, refresh: vi.fn().mockResolvedValue({}) });
 afterEach(() => { vi.useRealTimers(); vi.resetAllMocks(); vi.unstubAllGlobals(); });
 describe('Email verification', () => {
   it('loads status, exposes accessible numeric OTP, succeeds and continues', async () => {
@@ -65,7 +65,7 @@ describe('Email verification', () => {
   });
   it('registration confirmation and redirect use server verification flag', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ public_registration_enabled: true }), { headers: { 'Content-Type': 'application/json' } })));
-    const account = { signUp: vi.fn().mockResolvedValue({ role: 'member', email_verification_enabled: true, email_verified: false }) };
+    const account = { signUp: vi.fn().mockResolvedValue({ role: 'employee', email_verification_enabled: true, email_verified: false }) };
     render(<LoginPage session={account} />);
     fireEvent.click(await screen.findByRole('button', { name: 'Crear cuenta' }));
     fireEvent.change(screen.getByLabelText('Nombre'), { target: { value: 'Member' } });
