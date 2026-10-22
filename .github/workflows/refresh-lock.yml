@@ -1,0 +1,15 @@
+name: Refresh dependency lock
+on: [push]
+permissions:
+  contents: read
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm audit fix --package-lock-only
+      - name: Export reviewed lock
+        run: node -e 'console.log("ICMSA_LOCK_START");console.log(require("fs").readFileSync("package-lock.json","utf8"));console.log("ICMSA_LOCK_END")'
