@@ -10,6 +10,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - run: npm update vitest vite --package-lock-only
       - run: npm audit fix --package-lock-only
       - name: Export reviewed lock
         run: node -e 'console.log("ICMSA_LOCK_START");console.log(require("fs").readFileSync("package-lock.json","utf8"));console.log("ICMSA_LOCK_END")'
