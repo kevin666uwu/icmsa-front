@@ -81,3 +81,14 @@ describe('ICMSA institutional domain',()=>{
     expect(screen.queryByRole('link',{name:'Alumnos'})).not.toBeInTheDocument();
   });
 });
+
+it('submits the position and occupant through one atomic endpoint',async()=>{
+  const saved=vi.fn(),fetcher=vi.fn(async()=>response({status:'saved'}));
+  vi.stubGlobal('fetch',fetcher);
+  render(<PositionModal position={data.positions[0]} maps={organizationMaps(data)} canEdit={true} onClose={vi.fn()} onSaved={saved}/>);
+  await userEvent.click(screen.getByRole('button',{name:'Guardar cambios'}));
+  await waitFor(()=>expect(saved).toHaveBeenCalledOnce());
+  expect(fetcher).toHaveBeenCalledOnce();
+  expect(fetcher.mock.calls[0][0]).toContain('/positions/3/editor');
+  expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({name:'Docente',area_id:2,parent_position_id:null,employee_id:5});
+});

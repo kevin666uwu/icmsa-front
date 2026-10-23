@@ -20,8 +20,8 @@ export default function EmployeeDetail({ record, access, onClose }) {
         <section key={key}><h3>{label}</h3>{remote.data.overview[key].length ? <ul>{remote.data.overview[key].map(p => <li key={p.id}>{p.name} · {p.permission}</li>)}</ul> : <p className="muted">Sin procesos asignados.</p>}</section>)}
       {canEdit && <button onClick={() => setEditing(v => !v)}>{editing ? 'Cancelar edición' : 'Editar procesos'}</button>}
       {editing && <ProcessBoard processes={remote.data.processes} initial={{
-        responsible_ids: remote.data.overview.responsible.filter(p => p.sources.includes('direct')).map(p => p.id),
-        related_ids: remote.data.overview.related.filter(p => p.sources.includes('direct')).map(p => p.id) }}
+        responsible_ids: remote.data.overview.direct_records.filter(p => p.is_responsible).map(p => p.id),
+        related_ids: remote.data.overview.direct_records.filter(p => !p.is_responsible).map(p => p.id) }}
         busy={action.busy} onSave={draft => action.run(async () => { await write('/employees/' + record.id + '/processes', draft, 'PUT'); setEditing(false); setNotice('Asignaciones guardadas.'); remote.refresh(); })} />}
     </>}{action.error && <ErrorState message={action.error} />}
   </Modal>;

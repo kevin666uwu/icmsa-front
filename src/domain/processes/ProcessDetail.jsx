@@ -20,8 +20,10 @@ function StepsEditor({ initial, onSave, busy }) {
 }
 export default function ProcessDetail({ record, access, onClose }) {
   const loader = useCallback(signal => read('/processes/' + record.id + '/steps', signal), [record.id]);
+  const capabilitiesLoader = useCallback(signal => read('/processes/' + record.id + '/capabilities', signal), [record.id]);
+  const capabilities = useRemote(capabilitiesLoader);
   const remote = useRemote(loader), action = useAction(), [editing, setEditing] = useState(false), [notice, setNotice] = useState('');
-  const canWrite = access.permissions.includes('processes.write');
+  const canWrite = capabilities.data?.edit === true;
   return <Modal title={record.name} onClose={onClose}>
     <p className="eyebrow">Proceso · {record.status} · Versión {record.version}</p><p>{record.description || 'Sin descripción registrada.'}</p>
     {notice && <p role="status">{notice}</p>}
@@ -32,6 +34,6 @@ export default function ProcessDetail({ record, access, onClose }) {
       {canWrite && <button onClick={() => setEditing(v => !v)}>{editing ? 'Cancelar' : 'Editar pasos'}</button>}
     </>}
     {action.error && <ErrorState message={action.error} />}
-    {canWrite && <ProcessAssignments processId={record.id} access={access} />}
+    {capabilities.data?.manage && <ProcessAssignments processId={record.id} access={access} />}
   </Modal>;
 }
