@@ -16,10 +16,10 @@ export default function App() {
   useEffect(()=>{document.title=project.name;},[]);
   useEffect(()=>{document.getElementById('main-content')?.focus();},[path]);
   let content;
-  if(path==='/'||path==='/inicio')content=<PublicSite signedIn={Boolean(session.user)}/>;
+  if(path==='/'||path==='/inicio')content=<PublicSite/>;
   else if(session.loading)content=<LoadingState label="Comprobando sesión…"/>;
   else if(!canAccessRoute(path,session.user))content=session.user?<ErrorState message="No tienes permisos para acceder a esta sección."/>:<LoginPage session={session}/>;
-  else if(path==='/login'||!session.user)content=<div className="login-layout"><section className="login-intro"><p className="eyebrow">Instituto de Ciencias Médicas San Angelo</p><h1>Una institución conectada.</h1><p>Personas, procesos y comunidad académica en un mismo espacio.</p><span className="brand-badge">ICMSA OS</span></section><LoginPage session={session}/></div>;
+  else if(path==='/login'||!session.user)content=<div className="login-shell"><section className="login-brand-panel"><div className="login-brand-lockup"><img src="https://institutosanangelo.com/wp-content/uploads/2026/05/logo-san-angelo-1-788x1024.png" alt="" /><div><span>Instituto de Ciencias Médicas</span><strong>San Angelo</strong></div></div><div className="login-copy"><p className="login-kicker">ICMSA OS</p><h1>La operación institucional, en un solo lugar.</h1><p>Acceso privado para personal autorizado. Gestión académica, procesos, indicadores y operación interna.</p></div><small>Instituto de Ciencias Médicas San Angelo</small></section><section className="login-form-panel"><LoginPage session={session}/></section></div>;
   else if(path==='/verify-email')content=<EmailVerificationForm session={session}/>;
   else content=<Portal key={session.user.id} path={path} session={session}/>;
   return <><a className="skip-link" href="#main-content">Saltar al contenido</a>{path!=='/'&&path!=='/inicio'&&<header className="institutional-header"><a href="/" className="brand" onClick={e=>{e.preventDefault();navigate('/');}}>ICMSA OS</a><span>Instituto de Ciencias Médicas San Angelo</span>{session.user&&<button disabled={action.busy} onClick={()=>action.run(async()=>{try{await session.signOut();}finally{navigate('/login');}})}>Cerrar sesión</button>}</header>}
