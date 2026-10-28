@@ -7,6 +7,11 @@ export function canAccessRoute(path, user) {
 export function navigate(path) {
   if (!path.startsWith('/') || path.startsWith('//')) return;
   window.history.pushState({}, '', path);
-  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   window.dispatchEvent(new PopStateEvent('popstate'));
+  requestAnimationFrame(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.querySelector('.workspace-content')?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.querySelector('.campus-main')?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  });
 }
