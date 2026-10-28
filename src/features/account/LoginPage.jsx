@@ -7,7 +7,7 @@ import { navigate } from '../../app/router/navigation.js';
 const loadConfig = signal => apiFetch('/api/v1/config', { signal });
 export default function LoginPage({ session }) {
   const [register, setRegister] = useState(false); const action = useAction(); const config = useRemote(loadConfig);
-  return <div className="narrow"><Card><h1>{register ? 'Crear cuenta' : 'Iniciar sesión'}</h1><p>Accede a tu espacio de trabajo.</p><form onSubmit={event => {
+  return <div className="login-card-wrap"><Card><p className="login-kicker">Acceso seguro</p><h1>{register ? 'Crear cuenta' : 'Iniciar sesión'}</h1><p className="login-card-copy">Ingresa con las credenciales asignadas por la administración de ICMSA.</p><form onSubmit={event => {
     event.preventDefault(); const data = new FormData(event.currentTarget);
     action.run(async () => {
       if (register && data.get('password') !== data.get('confirmPassword')) throw new Error('Las contraseñas no coinciden.');
