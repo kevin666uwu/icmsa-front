@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRemote } from '../hooks/useRemote.js';
 import { LoadingState, ErrorState } from '../components/feedback/AsyncState.jsx';
 import { read } from './api.js';
-import { visibleNavigation } from './navigation.js';
+import { visibleNavigation, studentNavigation } from './navigation.js';
 import { navigate } from '../app/router/navigation.js';
 import Dashboard from './Dashboard.jsx';
 import ResourcePage from './ResourcePage.jsx';
@@ -20,7 +20,12 @@ export default function Portal({ path, session }) {
   },[path]);
   if(remote.loading)return <LoadingState label="Cargando acceso institucional…"/>;
   if(remote.error)return <ErrorState message={remote.error} onRetry={remote.refresh}/>;
-  const access=remote.data,items=visibleNavigation(access),selected=items.find(i=>i.path===path||(path==='/admin'&&i.type==='users'));
+  const access=remote.data;
+  if(access.role==='student'){
+    const selectedStudent=studentNavigation.find(item=>item.path===path)||studentNavigation[0];
+    return <StudentPortal view={selectedStudent.view} user={session.user} path={path}/>;
+  }
+  const items=visibleNavigation(access),selected=items.find(i=>i.path===path||(path==='/admin'&&i.type==='users'));
   const groups=[...new Set(items.map(i=>i.group))];
   let content=<ErrorState message="Esta página no está disponible para tu cuenta."/>;
   if(selected?.resource)content=<ResourcePage key={selected.resource} name={selected.resource} spec={access.resources[selected.resource]} access={access}/>;
