@@ -1,4 +1,5 @@
 import './public-site.css';
+import { SAN_ANGELO_LOGO } from './brand.js';
 
 const programs = [
   {
@@ -27,7 +28,7 @@ export default function PublicSite() {
   return <div className="public-site">
     <header className="public-nav">
       <a className="public-brand" href="#inicio" aria-label="Instituto de Ciencias Médicas San Angelo">
-        <img src="/san-angelo-logo.svg" alt="" />
+        <img src={SAN_ANGELO_LOGO} alt="" />
         <span><b>San Angelo</b><small>Instituto de Ciencias Médicas</small></span>
       </a>
       <nav aria-label="Navegación institucional">
@@ -56,7 +57,7 @@ export default function PublicSite() {
         </div>
         <div className="public-hero-art" aria-hidden="true">
           <div className="public-glow" />
-          <img src="/san-angelo-logo.svg" alt="" />
+          <img src={SAN_ANGELO_LOGO} alt="" />
           <span>ICMSA</span>
         </div>
       </section>
@@ -136,7 +137,7 @@ export default function PublicSite() {
       </section>
 
       <section className="public-final-cta">
-        <img src="/san-angelo-logo.svg" alt="" />
+        <img src={SAN_ANGELO_LOGO} alt="" />
         <div><p className="public-kicker">Instituto de Ciencias Médicas San Angelo</p><h2>La medicina necesita conocimiento. También carácter.</h2></div>
         <a className="public-button light" href="#programas">Explorar programas</a>
       </section>
