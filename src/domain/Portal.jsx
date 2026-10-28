@@ -23,7 +23,7 @@ export default function Portal({ path, session }) {
   else if(selected?.type==='users')content=<UsersPage user={session.user}/>;
   else if(selected?.type==='roles'||selected?.type==='settings')content=<AdminInfo key={selected.type} type={selected.type}/>;
   return <div className="workspace"><button className="mobile-menu" aria-expanded={menu} aria-controls="sidebar" onClick={()=>setMenu(v=>!v)}>☰ Menú</button>
-    <aside id="sidebar" className={'sidebar '+(menu?'is-open':'')}><div className="sidebar-brand"><img src="/san-angelo-logo.png" alt="" /><div><b>San Angelo</b><span>Instituto de Ciencias Médicas</span></div></div>
+    <aside id="sidebar" className={'sidebar '+(menu?'is-open':'')}><div className="sidebar-brand"><img src="/san-angelo-logo.svg" alt="" /><div><b>San Angelo</b><span>Instituto de Ciencias Médicas</span></div></div>
       <nav aria-label="Módulos institucionales">{groups.map(group=><section key={group}><h2>{group}</h2>{items.filter(i=>i.group===group).map(item=><a key={item.path} href={item.path} aria-current={selected===item?'page':undefined} onClick={event=>{if(event.metaKey||event.ctrlKey||event.shiftKey)return;event.preventDefault();navigate(item.path);setMenu(false);}}>{item.label}</a>)}</section>)}</nav><div className="sidebar-account"><strong>{session.user.name}</strong><span>{access.role}</span></div>
     </aside><div className="workspace-content">{content}</div></div>;
 }
