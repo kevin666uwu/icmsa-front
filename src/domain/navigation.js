@@ -1,5 +1,6 @@
 export const studentNavigation = [
   { path: '/portal', label: 'Inicio', group: 'Mi aula', type: 'student', view: 'overview' },
+  { path: '/portal/biblioteca', label: 'Biblioteca digital', group: 'Mi carrera', type: 'student', view: 'library' },
   { path: '/portal/mis-clases', label: 'Mis clases', group: 'Mi aula', type: 'student', view: 'classes' },
   { path: '/portal/avance', label: 'Mi avance', group: 'Mi carrera', type: 'student', view: 'progress' },
   { path: '/portal/carrera', label: 'Mi carrera', group: 'Mi carrera', type: 'student', view: 'program' },
@@ -10,6 +11,7 @@ export const studentNavigation = [
 ];
 
 export const navigation = [
+  { path: '/admin/biblioteca', label: 'Biblioteca digital', group: 'Administración', resource: 'library_resources' },
   { path: '/portal', label: 'Inicio', group: 'Institución', type: 'dashboard' },
   { path: '/portal/personal', label: 'Personal', group: 'Organización', resource: 'employees' },
   { path: '/portal/organigrama', label: 'Organigrama', group: 'Organización', permission: 'organization.read', type: 'organization' },
@@ -35,3 +37,4 @@ export function visibleNavigation(access) {
   if (access.role === 'student') return studentNavigation;
   return navigation.filter(item => item.resource ? Boolean(access.resources[item.resource]) : !item.permission || access.permissions.includes(item.permission));
 }
+

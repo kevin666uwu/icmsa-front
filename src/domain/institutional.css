@@ -33,3 +33,10 @@
 .workspace-content{align-self:start!important;justify-self:stretch;min-height:0!important;padding-top:2rem!important}
 .workspace-content>section{margin-top:0!important;min-height:0!important}
 .form-hint,.modal-intro{grid-column:1/-1;color:#6f7c88;font-size:.78rem;line-height:1.6;margin:.1rem 0}
+
+
+.library-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:1rem}
+.library-card{display:flex;flex-direction:column;align-items:flex-start;overflow-wrap:anywhere}
+.library-card h2{font-size:1.25rem;margin:.75rem 0}
+.library-card .button{margin-top:auto}
+.library-description{white-space:pre-wrap}

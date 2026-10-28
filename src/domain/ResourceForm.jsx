@@ -39,6 +39,7 @@ export default function ResourceForm({ spec, access, record, onClose, onSaved })
           else if (field.choices) input = <select {...props}>{field.choices.map(value => <option key={value} value={value}>{value}</option>)}</select>;
           else if (field.reference && field.reference !== 'users') {
             let options = remote.data[field.reference] || [];
+            if (key === 'subject_id' && values.program_id) options = options.filter(row => row.program_id === Number(values.program_id));
             if (key === 'area_id' && values.department_id) options = options.filter(row => row.department_id === Number(values.department_id));
             if (key === 'parent_position_id' && record) options = options.filter(row => row.id !== record.id);
             input = <select {...props}><option value="">Seleccionar…</option>{options.map(row => <option key={row.id} value={row.id}>{displayName(row)} · #{row.id}</option>)}</select>;
@@ -51,3 +52,4 @@ export default function ResourceForm({ spec, access, record, onClose, onSaved })
       </form>}
   </Modal>;
 }
+

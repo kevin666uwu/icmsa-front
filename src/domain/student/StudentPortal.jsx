@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Library from './Library.jsx';
 import { useRemote } from '../../hooks/useRemote.js';
 import { LoadingState, ErrorState } from '../../components/feedback/AsyncState.jsx';
 import { read } from '../api.js';
@@ -14,6 +15,7 @@ const studentNav=[
   ['/portal/avance','Mi avance','◔'],
   ['/portal/carrera','Mi carrera','◇'],
   ['/portal/profesores','Profesores','◎'],
+  ['/portal/biblioteca','Biblioteca digital','▥'],
   ['/portal/pagos','Pagos','◫'],
   ['/portal/tramites','Trámites','↗'],
   ['/portal/documentos','Documentos','▤'],
@@ -43,7 +45,7 @@ function Overview({data,user}){const s=data.student,p=data.program,m=data.summar
     <div className="campus-card campus-program-card"><p className="campus-kicker">Mi carrera</p><h2>{p?.name||'Programa por asignar'}</h2><p>{p?.description||'Aquí verás la información de tu plan académico y progreso general.'}</p><div className="campus-ring" style={{'--progress':pct(m.career_progress)+'%'}}><span>{m.career_progress}%</span></div><button onClick={()=>navigate('/portal/carrera')}>Ver información de carrera</button></div>
   </section>
   <section className="campus-card"><div className="campus-card-heading"><div><p className="campus-kicker">Accesos rápidos</p><h2>¿Qué necesitas hacer?</h2></div></div><div className="campus-shortcuts">
-    {[['Mis profesores','/portal/profesores','Conoce a tus docentes'],['Pagos y saldo','/portal/pagos','Consulta cargos y abonos'],['Trámites','/portal/tramites','Da seguimiento a solicitudes'],['Documentos','/portal/documentos','Consulta archivos académicos']].map(([t,p,d])=><button key={p} onClick={()=>navigate(p)}><strong>{t}</strong><span>{d}</span><b>→</b></button>)}
+    {[['Biblioteca digital','/portal/biblioteca','Consulta recursos de tu carrera'],['Mis profesores','/portal/profesores','Conoce a tus docentes'],['Pagos y saldo','/portal/pagos','Consulta cargos y abonos'],['Trámites','/portal/tramites','Da seguimiento a solicitudes'],['Documentos','/portal/documentos','Consulta archivos académicos']].map(([t,p,d])=><button key={p} onClick={()=>navigate(p)}><strong>{t}</strong><span>{d}</span><b>→</b></button>)}
   </div></section>
 </>;}
 function Classes({data}){return <Page title="Aula virtual" kicker="Mis clases" intro="Tus materias activas, profesores y avance por curso.">{data.classes.length?<div className="campus-class-list">{data.classes.map(row=><ClassCard key={row.id} row={row}/>)}</div>:<Empty title="Aún no tienes materias inscritas">Tus clases aparecerán aquí cuando se asignen a tu expediente.</Empty>}</Page>;}
@@ -68,9 +70,11 @@ export default function StudentPortal({view='overview',user,path,session}){
   if(view==='teachers')content=<Teachers data={data}/>;
   if(view==='services')content=<Services data={data}/>;
   if(view==='documents')content=<Documents/>;
+  if(view==='library')content=<Library/>;
   return <div className="campus-shell">
     <header className="campus-header"><a href="/portal" onClick={e=>{e.preventDefault();navigate('/portal');}} className="campus-brand"><img src={SAN_ANGELO_LOGO} alt=""/><span><b>San Angelo</b><small>Portal del alumno</small></span></a><button className="campus-menu-button" onClick={()=>setMenu(v=>!v)}>Menú</button><nav className={menu?'is-open':''}>{studentNav.slice(0,5).map(([p,l])=><a key={p} href={p} aria-current={path===p?'page':undefined} onClick={e=>{e.preventDefault();navigate(p);setMenu(false);}}>{l}</a>)}</nav><div className="campus-user"><span>{user.name}</span><small>Alumno</small>{session&&<button onClick={async()=>{await session.signOut();navigate('/login');}}>Salir</button>}</div></header>
     <div className="campus-subnav">{studentNav.slice(5).map(([p,l,icon])=><a key={p} href={p} aria-current={path===p?'page':undefined} onClick={e=>{e.preventDefault();navigate(p);}}><span>{icon}</span>{l}</a>)}</div>
     <main className="campus-main">{content}</main>
   </div>;
 }
+
