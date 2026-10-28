@@ -5,21 +5,18 @@ const programs = [
     type: 'Licenciatura',
     title: 'Médico Cirujano',
     description: 'Formación científica, clínica y humana para responder con excelencia a las necesidades reales del sector salud.',
-    href: 'https://institutosanangelo.com/licenciatura-en-medico-cirujano/',
     mark: '01',
   },
   {
     type: 'Maestría',
     title: 'Docencia de la Salud',
     description: 'Especialización para enseñar, formar y desarrollar nuevas generaciones de profesionales de las ciencias de la salud.',
-    href: 'https://institutosanangelo.com/maestria-en-docencia-de-la-salud/',
     mark: '02',
   },
   {
     type: 'Maestría',
     title: 'Dirección y Gestión de Instituciones de Salud',
     description: 'Preparación para liderar organizaciones de salud con estrategia, criterio administrativo y mejora continua.',
-    href: 'https://institutosanangelo.com/maestria-en-direccion-y-gestion-de-instituciones-de-salud/',
     mark: '03',
   },
 ];
@@ -30,7 +27,7 @@ export default function PublicSite() {
   return <div className="public-site">
     <header className="public-nav">
       <a className="public-brand" href="#inicio" aria-label="Instituto de Ciencias Médicas San Angelo">
-        <img src="https://institutosanangelo.com/wp-content/uploads/2026/05/logo-san-angelo-1-788x1024.png" alt="" />
+        <img src="/san-angelo-logo.png" alt="" />
         <span><b>San Angelo</b><small>Instituto de Ciencias Médicas</small></span>
       </a>
       <nav aria-label="Navegación institucional">
@@ -59,7 +56,7 @@ export default function PublicSite() {
         </div>
         <div className="public-hero-art" aria-hidden="true">
           <div className="public-glow" />
-          <img src="https://institutosanangelo.com/wp-content/uploads/2026/05/logo-san-angelo-1-788x1024.png" alt="" />
+          <img src="/san-angelo-logo.png" alt="" />
           <span>ICMSA</span>
         </div>
       </section>
@@ -85,7 +82,7 @@ export default function PublicSite() {
             <div className="program-top"><span>{program.mark}</span><small>{program.type}</small></div>
             <h3>{program.title}</h3>
             <p>{program.description}</p>
-            <a href={program.href} target="_blank" rel="noreferrer">Conocer programa <span aria-hidden="true">↗</span></a>
+            <span className="program-label">Programa académico</span>
           </article>)}
         </div>
       </section>
@@ -134,12 +131,12 @@ export default function PublicSite() {
         <div className="campus-card">
           <span>Instituto San Angelo</span>
           <strong>Educación que impulsa tu futuro.</strong>
-          <a href="https://institutosanangelo.com/" target="_blank" rel="noreferrer">Visitar sitio institucional <span aria-hidden="true">↗</span></a>
+          <span className="campus-note">Información institucional disponible en esta plataforma.</span>
         </div>
       </section>
 
       <section className="public-final-cta">
-        <img src="https://institutosanangelo.com/wp-content/uploads/2026/05/logo-san-angelo-1-788x1024.png" alt="" />
+        <img src="/san-angelo-logo.png" alt="" />
         <div><p className="public-kicker">Instituto de Ciencias Médicas San Angelo</p><h2>La medicina necesita conocimiento. También carácter.</h2></div>
         <a className="public-button light" href="#programas">Explorar programas</a>
       </section>
@@ -148,7 +145,7 @@ export default function PublicSite() {
     <footer className="public-footer">
       <div className="public-brand footer-brand"><span><b>San Angelo</b><small>Instituto de Ciencias Médicas</small></span></div>
       <p>Licenciaturas · Maestrías · Educación médica</p>
-      <div><a href="https://institutosanangelo.com/" target="_blank" rel="noreferrer">Sitio institucional</a></div>
+      <div><span>Instituto de Ciencias Médicas San Angelo</span></div>
     </footer>
   </div>;
 }
