@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './public-site.css';
 import { SAN_ANGELO_LOGO } from './brand.js';
 
@@ -25,13 +26,15 @@ const programs = [
 const values = ['Ética profesional','Excelencia académica','Vocación de servicio','Disciplina','Liderazgo','Innovación','Humanismo','Responsabilidad social'];
 
 export default function PublicSite() {
+  const [menu, setMenu] = useState(false);
   return <div className="public-site">
-    <header className="public-nav">
+    <header className="public-nav" onKeyDown={e => { if (e.key === 'Escape') { setMenu(false); document.getElementById('public-menu-toggle')?.focus(); } }}>
       <a className="public-brand" href="#inicio" aria-label="Instituto de Ciencias Médicas San Angelo">
         <img src={SAN_ANGELO_LOGO} alt="" />
         <span><b>San Angelo</b><small>Instituto de Ciencias Médicas</small></span>
       </a>
-      <nav aria-label="Navegación institucional">
+      <button id="public-menu-toggle" className="public-menu-toggle" aria-expanded={menu} aria-controls="public-navigation" onClick={() => setMenu(v => !v)}>Menú</button>
+      <nav id="public-navigation" className={menu ? 'is-open' : ''} aria-label="Navegación institucional" onClick={e => { if (e.target.closest('a')) setMenu(false); }}>
         <a href="#programas">Programas</a>
         <a href="#modelo">Modelo educativo</a>
         <a href="#filosofia">Filosofía</a>
@@ -129,7 +132,7 @@ export default function PublicSite() {
           <h2>Un espacio para aprender medicina con exigencia, tecnología y propósito.</h2>
           <p>Instituto de Ciencias Médicas San Angelo · Coacalco de Berriozábal, Estado de México.</p>
         </div>
-        <div className="campus-card">
+        <div className="public-campus-card">
           <span>Instituto San Angelo</span>
           <strong>Educación que impulsa tu futuro.</strong>
           <span className="campus-note">Información institucional disponible en esta plataforma.</span>
@@ -150,3 +153,4 @@ export default function PublicSite() {
     </footer>
   </div>;
 }
+

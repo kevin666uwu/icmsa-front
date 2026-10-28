@@ -40,3 +40,99 @@
 .library-card h2{font-size:1.25rem;margin:.75rem 0}
 .library-card .button{margin-top:auto}
 .library-description{white-space:pre-wrap}
+
+/* Responsive content must shrink and wrap, without clipping information. */
+:where(.workspace-content,.campus-main,.campus-page,.campus-card,.panel,.metric,.dialog,.login-form-panel) :where(div,section,article,form,label,fieldset){min-width:0}
+:where(.workspace,.campus-shell,.dialog,.login-shell) :where(h1,h2,h3,p,dd,li,strong,span,a){overflow-wrap:anywhere}
+:where(input,select,textarea){max-width:100%}
+fieldset{min-width:0}
+.campus-main{min-width:0;width:100%;min-height:0}
+.campus-class-card{grid-template-columns:52px minmax(0,1fr) auto}
+.campus-program-detail dl{grid-template-columns:repeat(2,minmax(0,1fr))}
+.campus-shortcuts{grid-template-columns:repeat(4,minmax(0,1fr))}
+.campus-shortcuts button{min-width:0;grid-template-columns:minmax(0,1fr) auto}
+.campus-mobile-link,.campus-mobile-account{display:none}
+.campus-subnav{flex-wrap:wrap}
+.campus-subnav a{min-height:44px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.mobile-admin-links{display:block}
+.mobile-admin-links section{margin-bottom:1rem}
+.mobile-admin-links h2{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:1rem 0 .4rem}
+.mobile-admin-links a{display:block;min-height:44px;padding:.7rem;border-radius:9px;text-decoration:none}
+.mobile-admin-links a[aria-current=page]{background:#e6f0eb;font-weight:700}
+.mobile-admin-account{border-top:1px solid var(--line);padding-top:1rem}
+.dialog[open]{display:flex;flex-direction:column;overflow:hidden}
+.dialog-heading{position:static;flex-shrink:0;background:#fff;padding:.5rem 0}
+.dialog-body{min-height:0;overflow:auto;overscroll-behavior:contain}
+.dialog-heading button{flex-shrink:0;min-height:44px}
+.dialog{overscroll-behavior:contain;scroll-padding:4rem;max-height:90dvh}
+.skip-link{z-index:100}
+@media(max-width:1100px){
+ .campus-header nav.is-open{top:100%;max-height:min(65dvh,calc(100dvh - 160px));overflow-y:auto;overscroll-behavior:contain;align-items:stretch;flex-wrap:nowrap}
+ .campus-header nav .campus-mobile-link{display:block}
+ .campus-mobile-account{display:grid;gap:8px;border-top:1px solid #ffffff30;margin-top:8px;padding:12px;color:#fff}
+ .campus-mobile-account span{color:#c6d1dc;font-size:.8rem}
+ .campus-mobile-account button{min-height:44px;background:#fff;color:#07192d;justify-self:start}
+ .campus-header nav a{min-height:44px;border-radius:8px}
+ .campus-menu-button{min-height:44px;flex-shrink:0}
+ .campus-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+ .institutional-header{height:auto;min-height:60px;gap:12px;padding:8px 12px}
+ .institutional-lockup{min-width:0}.institutional-lockup span{min-width:0}
+ .institutional-header>button{font-size:.75rem;min-height:44px;flex-shrink:0;padding:8px}
+ .workspace-content{padding:16px!important}
+ .mobile-menu{min-height:44px}
+ .mobile-navigation{margin:0 0 0 auto;inset:0;width:min(390px,100%);max-width:100%;height:100dvh;max-height:100dvh;border-radius:0;padding:16px}
+ .dialog-heading{top:-1rem;gap:12px}.dialog-heading h2{min-width:0;font-size:1.1rem}
+ .form-actions{flex-wrap:wrap}.form-actions>*{flex:1;min-height:44px}
+ .entity-form input,.entity-form select,.entity-form textarea,.toolbar input,.toolbar select,.field input,.field select,fieldset input,fieldset select,fieldset textarea{font-size:16px;min-height:44px}
+ .entity-form input[type=checkbox]{min-height:24px;width:24px;height:24px}
+ .toolbar label{min-width:min(100%,150px)}
+ .row-actions{flex-wrap:wrap}.row-actions button{white-space:normal;min-height:44px}
+ .page-heading>.button{min-height:44px}.pagination button{min-height:44px}
+ .login-brand-panel{min-height:0;gap:32px;padding:28px 20px}.login-copy h1{font-size:clamp(2.2rem,10vw,3.8rem)}
+ .login-brand-panel>small{margin-top:0}.login-form-panel{padding:24px 16px}.login-card-wrap .card{padding:24px 18px}
+}
+@media(max-width:700px){
+ .campus-main{padding:12px;gap:16px}
+ .campus-header{padding:0 14px;gap:12px}.campus-brand{min-width:0;gap:8px}.campus-brand b{font-size:.9rem}
+ .campus-subnav{position:static;gap:8px;padding:10px 12px;overflow:visible}
+ .campus-subnav a{padding:8px 12px}
+ .campus-page,.campus-card{padding:16px;border-radius:16px}
+ .campus-page>h1{font-size:clamp(2rem,9vw,3rem)}
+ .campus-welcome{padding:24px;gap:20px}
+ .campus-student-chip{min-width:0;max-width:100%}
+ .campus-class-card{grid-template-columns:40px minmax(0,1fr);gap:12px;padding:12px}
+ .campus-class-icon{width:40px;height:40px;border-radius:12px}
+ .campus-shortcuts{grid-template-columns:1fr}
+ .campus-card-heading{flex-wrap:wrap;gap:8px}.campus-card-heading button{min-height:44px}
+ .campus-priority button,.campus-card button{min-height:44px}
+ .campus-program-detail dl{grid-template-columns:1fr}
+ .campus-movements article,.campus-service-list article{flex-wrap:wrap}
+ .campus-empty{padding:24px 16px}.campus-progress-summary{padding:16px}
+ .campus-progress-summary>div{flex-wrap:wrap}
+ .campus-finance-grid strong{font-size:clamp(1.4rem,7vw,1.8rem)}
+}
+@media(max-width:600px){
+ .responsive-table{display:block;background:transparent}
+ .responsive-table caption{display:block;padding:12px}
+ .responsive-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ .responsive-table tbody{display:grid;gap:12px;padding:8px}
+ .responsive-table tr{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px}
+ .responsive-table td{display:grid;grid-template-columns:minmax(75px,.4fr) minmax(0,1fr);gap:12px;padding:10px 8px;max-width:none;white-space:normal;align-items:start;font-size:.85rem}
+ .responsive-table td::before{content:attr(data-label);font-weight:700;color:var(--muted);font-size:.75rem}
+ .responsive-table td:last-child{border-bottom:0}
+ .responsive-table td[data-label=Acciones]{display:flex;flex-wrap:wrap;gap:8px}
+ .responsive-table td[data-label=Acciones]::before{flex-basis:100%}
+ .responsive-table td button{min-height:44px;white-space:normal}
+ .table-scroll:has(.responsive-table){border:0;background:transparent}
+ .metrics{grid-template-columns:1fr}.summary-list li{gap:12px}
+ .org-canvas{padding:8px}.org-tree ul{margin-left:4px;padding-left:10px}
+ .process-lane select{font-size:16px;min-height:44px}
+}
+@media(max-width:760px){
+ button{min-height:44px}
+ .campus-header{height:auto;min-height:72px;padding-top:10px;padding-bottom:10px}
+ .campus-brand span{min-width:0}
+}

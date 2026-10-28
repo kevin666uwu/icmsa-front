@@ -12,6 +12,7 @@ export default function IndicatorHistory({ record, canWrite, onClose }) {
       <label>Periodo<input name="period" required maxLength={100}/></label><label>Valor<input name="value" type="number" step="0.0001" required/></label><label>Meta<input name="target" type="number" step="0.0001" required defaultValue={record.target}/></label>
       {action.error&&<ErrorState message={action.error}/>}<button className="button primary" disabled={action.busy}>Registrar medición</button>
     </form>}
-    {remote.loading?<LoadingState/>:remote.error?<ErrorState message={remote.error}/>:remote.data.length?<div className="table-scroll"><table><caption>Histórico de mediciones</caption><thead><tr><th>Periodo</th><th>Valor</th><th>Meta</th><th>Cumplimiento</th></tr></thead><tbody>{remote.data.map(row=><tr key={row.id}><td>{row.period}</td><td>{row.value}</td><td>{row.target}</td><td>{row.compliance===null?'No definido':row.compliance+'%'}</td></tr>)}</tbody></table></div>:<p>Sin mediciones. Registra el primer valor para iniciar el histórico.</p>}
+    {remote.loading?<LoadingState/>:remote.error?<ErrorState message={remote.error}/>:remote.data.length?<div className="table-scroll"><table className="responsive-table"><caption>Histórico de mediciones</caption><thead><tr><th>Periodo</th><th>Valor</th><th>Meta</th><th>Cumplimiento</th></tr></thead><tbody>{remote.data.map(row=><tr key={row.id}><td data-label="Periodo">{row.period}</td><td data-label="Valor">{row.value}</td><td data-label="Meta">{row.target}</td><td data-label="Cumplimiento">{row.compliance===null?'No definido':row.compliance+'%'}</td></tr>)}</tbody></table></div>:<p>Sin mediciones. Registra el primer valor para iniciar el histórico.</p>}
   </Modal>;
 }
+

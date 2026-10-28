@@ -13,7 +13,7 @@ export function Select({ label, children, ...props }) {
 export function Card({ children, className = '' }) { return <section className={`card ${className}`}>{children}</section>; }
 export function ResponsiveContainer({ children }) { return <div className="container">{children}</div>; }
 export function Table({ caption, columns, rows }) {
-  return <div className="table-scroll" tabIndex={0} role="region" aria-label={caption}><table><caption>{caption}</caption><thead><tr>{columns.map(c => <th scope="col" key={c.key}>{c.label}</th>)}</tr></thead><tbody>{rows.map(row => <tr key={row.id}>{columns.map(c => <td key={c.key}>{c.render ? c.render(row) : String(row[c.key] ?? '')}</td>)}</tr>)}</tbody></table></div>;
+  return <div className="table-scroll" tabIndex={0} role="region" aria-label={caption}><table className="responsive-table"><caption>{caption}</caption><thead><tr>{columns.map(c => <th scope="col" key={c.key}>{c.label}</th>)}</tr></thead><tbody>{rows.map(row => <tr key={row.id}>{columns.map(c => <td key={c.key} data-label={c.label}>{c.render ? c.render(row) : String(row[c.key] ?? '')}</td>)}</tr>)}</tbody></table></div>;
 }
 export function Tabs({ items, label = 'Secciones' }) {
   const [active, setActive] = useState(0); const id = useId(); const refs = useRef([]);
@@ -26,3 +26,4 @@ export function Tabs({ items, label = 'Secciones' }) {
 export function Toast({ message, onDismiss }) {
   return message ? <div className="toast" role="status">{message}<Button variant="secondary" onClick={onDismiss} aria-label="Cerrar notificación">Cerrar</Button></div> : null;
 }
+
