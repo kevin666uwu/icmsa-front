@@ -1,10 +1,12 @@
-const studentNavigation = [
+export const studentNavigation = [
   { path: '/portal', label: 'Inicio', group: 'Mi aula', type: 'student', view: 'overview' },
   { path: '/portal/mis-clases', label: 'Mis clases', group: 'Mi aula', type: 'student', view: 'classes' },
   { path: '/portal/avance', label: 'Mi avance', group: 'Mi carrera', type: 'student', view: 'progress' },
   { path: '/portal/carrera', label: 'Mi carrera', group: 'Mi carrera', type: 'student', view: 'program' },
   { path: '/portal/profesores', label: 'Profesores', group: 'Mi carrera', type: 'student', view: 'teachers' },
   { path: '/portal/pagos', label: 'Pagos y saldo', group: 'Servicios', type: 'student', view: 'finance' },
+  { path: '/portal/tramites', label: 'Trámites', group: 'Servicios', type: 'student', view: 'services' },
+  { path: '/portal/documentos', label: 'Documentos', group: 'Servicios', type: 'student', view: 'documents' },
 ];
 
 export const navigation = [
