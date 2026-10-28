@@ -70,7 +70,7 @@ describe('ICMSA institutional domain',()=>{
   it('shows actionable loading and network errors',async()=>{
     vi.stubGlobal('fetch',vi.fn(async()=>{throw new Error('offline');}));
     render(<ResourcePage name="departments" spec={spec} access={access}/>);
-    expect(screen.getByText('Cargando…')).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: 'Cargando…' })).toBeInTheDocument();
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(screen.getByRole('button',{name:'Reintentar'})).toBeInTheDocument();
   });
@@ -92,3 +92,4 @@ it('submits the position and occupant through one atomic endpoint',async()=>{
   expect(fetcher.mock.calls[0][0]).toContain('/positions/3/editor');
   expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({name:'Docente',area_id:2,parent_position_id:null,employee_id:5});
 });
+

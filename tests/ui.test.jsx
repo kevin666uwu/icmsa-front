@@ -41,7 +41,7 @@ describe('Accessible UI and protected routes', () => {
     let resolve;
     vi.stubGlobal('fetch', vi.fn(() => new Promise(done => { resolve = done; })));
     render(<App />);
-    expect(screen.getByText('Comprobando sesión…')).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: 'Comprobando sesión…' })).toBeInTheDocument();
     expect(screen.queryByText('Administración de usuarios')).not.toBeInTheDocument();
     await waitFor(() => expect(resolve).toBeTypeOf('function'));
     resolve(new Response(JSON.stringify({ id: 1, role: 'employee', active: true }), { headers: { 'Content-Type': 'application/json' } }));
@@ -60,3 +60,4 @@ describe('Accessible UI and protected routes', () => {
     await waitFor(() => expect(screen.getByText('new')).toBeInTheDocument());
   });
 });
+

@@ -14,7 +14,7 @@ describe('Email verification', () => {
     service.verifyEmailCode.mockResolvedValue({ email_verified: true });
     const account = session();
     render(<EmailVerificationForm session={account} />);
-    expect(screen.getByText('Comprobando verificación…')).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: 'Comprobando verificación…' })).toBeInTheDocument();
     const input = await screen.findByLabelText('Código de verificación');
     expect(input).toHaveAttribute('autocomplete', 'one-time-code');
     expect(input).toHaveAttribute('inputmode', 'numeric');
@@ -89,3 +89,4 @@ it('does not duplicate verification submissions', async () => {
   expect(service.verifyEmailCode).toHaveBeenCalledOnce();
   expect(screen.getByRole('button', { name: 'Procesando…' })).toBeDisabled();
 });
+
