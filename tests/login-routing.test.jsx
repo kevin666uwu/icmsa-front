@@ -18,6 +18,7 @@ it.each(['/portal','/portal/biblioteca','/admin/usuarios'])('redirects unauthent
  expect(replace).toHaveBeenCalledWith({},'', '/login');
  expect(screen.getAllByLabelText('Correo')).toHaveLength(1);
  expect(document.querySelector('.login-shell')).toBeInTheDocument();
+ expect(document.querySelector('.institutional-header')).toBeNull();
  replace.mockRestore();
 });
 it('redirects an expired portal session to login',async()=>{
