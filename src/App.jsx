@@ -28,13 +28,21 @@ export default function App() {
     document.querySelector('.workspace-content')?.scrollTo?.({ top: 0, left: 0, behavior: 'auto' });
     document.getElementById('main-content')?.focus({ preventScroll: true });
   },[path]);
+  const publicPage=path==='/'||path==='/inicio';
+  const redirect=session.loading||publicPage?null:
+    !session.user&&path!=='/login'?'/login':
+    session.user&&path==='/login'?(session.user.email_verification_enabled&&!session.user.email_verified?'/verify-email':'/portal'):null;
+  useEffect(()=>{
+    if(redirect)navigate(redirect,{replace:true});
+  },[redirect]);
   let content;
-  if(path==='/'||path==='/inicio')content=<PublicSite/>;
-  else if(session.loading)content=<LoadingState label="Comprobando sesión…"/>;
-  else if(!canAccessRoute(path,session.user))content=session.user?<ErrorState message="No tienes permisos para acceder a esta sección."/>:<LoginPage session={session}/>;
-  else if(path==='/login'||!session.user)content=<div className="login-shell"><section className="login-brand-panel"><div className="login-brand-lockup"><img src={SAN_ANGELO_LOGO} alt="" /><div><span>Instituto de Ciencias Médicas</span><strong>San Angelo</strong></div></div><div className="login-copy"><p className="login-kicker">Plataforma institucional</p><h1>La operación institucional, en un solo lugar.</h1><p>Acceso privado para personal autorizado. Gestión académica, procesos, indicadores y operación interna.</p></div><small>Instituto de Ciencias Médicas San Angelo</small></section><section className="login-form-panel"><LoginPage session={session}/></section></div>;
+  if(publicPage)content=<PublicSite/>;
+  else if(session.loading||redirect)content=<LoadingState label="Comprobando sesión…"/>;
+  else if(!canAccessRoute(path,session.user))content=<ErrorState message="No tienes permisos para acceder a esta sección."/>;
+  else if(path==='/login')content=<div className="login-shell"><section className="login-brand-panel"><div className="login-brand-lockup"><img src={SAN_ANGELO_LOGO} alt="" /><div><span>Instituto de Ciencias Médicas</span><strong>San Angelo</strong></div></div><div className="login-copy"><p className="login-kicker">Plataforma institucional</p><h1>La operación institucional, en un solo lugar.</h1><p>Acceso privado para personal autorizado. Gestión académica, procesos, indicadores y operación interna.</p></div><small>Instituto de Ciencias Médicas San Angelo</small></section><section className="login-form-panel"><LoginPage session={session}/></section></div>;
   else if(path==='/verify-email')content=<EmailVerificationForm session={session}/>;
   else content=<Portal key={session.user.id} path={path} session={session}/>;
   return <><a className="skip-link" href="#main-content">Saltar al contenido</a>{path!=='/'&&path!=='/inicio'&&session.user?.role!=='student'&&<header className="institutional-header"><a href="/" className="brand institutional-lockup" onClick={e=>{e.preventDefault();navigate('/');}}><img src={SAN_ANGELO_LOGO} alt="" /><span><b>San Angelo</b><small>Instituto de Ciencias Médicas</small></span></a>{session.user&&<button disabled={action.busy} onClick={()=>action.run(async()=>{try{await session.signOut();}finally{navigate('/login');}})}>Cerrar sesión</button>}</header>}
     {action.error&&<ErrorState message={action.error}/>}<main id="main-content" tabIndex={-1}>{content}</main></>;
 }
+
