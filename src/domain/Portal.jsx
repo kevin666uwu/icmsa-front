@@ -23,7 +23,7 @@ export default function Portal({ path, session }) {
   const access=remote.data;
   if(access.role==='student'){
     const selectedStudent=studentNavigation.find(item=>item.path===path)||studentNavigation[0];
-    return <StudentPortal view={selectedStudent.view} user={session.user} path={path}/>;
+    return <StudentPortal view={selectedStudent.view} user={session.user} path={path} session={session}/>;
   }
   const items=visibleNavigation(access),selected=items.find(i=>i.path===path||(path==='/admin'&&i.type==='users'));
   const groups=[...new Set(items.map(i=>i.group))];
