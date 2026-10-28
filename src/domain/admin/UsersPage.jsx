@@ -3,13 +3,21 @@ import { Modal } from '../../components/ui/Modal.jsx';
 import { useRemote, useAction } from '../../hooks/useRemote.js';
 import { LoadingState, ErrorState } from '../../components/feedback/AsyncState.jsx';
 import { read, write, allRecords } from '../api.js';
-const roles=['super_admin','director','coordinator','employee','viewer'];
+const roles=[
+  ['super_admin','Super administrador'],
+  ['director','Director'],
+  ['coordinator','Coordinador'],
+  ['employee','Personal'],
+  ['teacher','Docente'],
+  ['student','Alumno'],
+  ['viewer','Consulta'],
+];
 function UserEditor({ record, onClose, onSaved }) {
   const action=useAction();
   return <Modal title={record?'Editar usuario':'Crear usuario'} onClose={onClose}><form className="entity-form" onSubmit={e=>{e.preventDefault();const data=Object.fromEntries(new FormData(e.currentTarget));data.active=data.active==='true';if(!data.password)delete data.password;action.run(async()=>{await write('/users'+(record?'/'+record.id:''),data,record?'PATCH':'POST');onSaved();});}}>
     {!record&&<><label>Nombre<input name="name" required maxLength={120}/></label><label>Correo<input name="email" type="email" required/></label></>}
     <label>{record?'Nueva contraseña (opcional)':'Contraseña inicial'}<input name="password" type="password" autoComplete="new-password" minLength={12} maxLength={128} required={!record}/></label>
-    <label>Rol<select name="role" defaultValue={record?.role||'employee'}>{roles.map(role=><option key={role}>{role}</option>)}</select></label>
+    <label>Rol<select name="role" defaultValue={record?.role||'employee'}>{roles.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
     <label>Estado<select name="active" defaultValue={String(record?.active??true)}><option value="true">Activo</option><option value="false">Inactivo</option></select></label>
     {action.error&&<ErrorState message={action.error}/>}<button className="button primary" disabled={action.busy}>{action.busy?'Guardando…':'Guardar usuario'}</button>
   </form></Modal>;
