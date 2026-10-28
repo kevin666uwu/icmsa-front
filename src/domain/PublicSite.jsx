@@ -1,32 +1,16 @@
 import { useState } from 'react';
+import { programs } from './academicPrograms.js';
+import AdmissionForm from './admissions/AdmissionForm.jsx';
 import './public-site.css';
 import { SAN_ANGELO_LOGO } from './brand.js';
 
-const programs = [
-  {
-    type: 'Licenciatura',
-    title: 'Médico Cirujano',
-    description: 'Formación científica, clínica y humana para responder con excelencia a las necesidades reales del sector salud.',
-    mark: '01',
-  },
-  {
-    type: 'Maestría',
-    title: 'Docencia de la Salud',
-    description: 'Especialización para enseñar, formar y desarrollar nuevas generaciones de profesionales de las ciencias de la salud.',
-    mark: '02',
-  },
-  {
-    type: 'Maestría',
-    title: 'Dirección y Gestión de Instituciones de Salud',
-    description: 'Preparación para liderar organizaciones de salud con estrategia, criterio administrativo y mejora continua.',
-    mark: '03',
-  },
-];
+
 
 const values = ['Ética profesional','Excelencia académica','Vocación de servicio','Disciplina','Liderazgo','Innovación','Humanismo','Responsabilidad social'];
 
 export default function PublicSite() {
   const [menu, setMenu] = useState(false);
+  const [admission, setAdmission] = useState(null);
   return <div className="public-site">
     <header className="public-nav" onKeyDown={e => { if (e.key === 'Escape') { setMenu(false); document.getElementById('public-menu-toggle')?.focus(); } }}>
       <a className="public-brand" href="#inicio" aria-label="Instituto de Ciencias Médicas San Angelo">
@@ -79,14 +63,14 @@ export default function PublicSite() {
       <section className="public-programs" id="programas">
         <div className="public-section-heading">
           <div><p className="public-kicker">Oferta académica</p><h2>Tu siguiente etapa comienza aquí.</h2></div>
-          <p>Programas orientados a la práctica, al pensamiento crítico y a una visión contemporánea de la medicina y la gestión de salud.</p>
+          <div><p>Programas orientados a la práctica, al pensamiento crítico y a una visión contemporánea de la medicina y la gestión de salud.</p><button type="button" className="program-admission-button" onClick={() => setAdmission('')}>Solicitud de admisión <span aria-hidden="true">↗</span></button></div>
         </div>
         <div className="program-grid">
           {programs.map(program => <article className="program-card" key={program.title}>
             <div className="program-top"><span>{program.mark}</span><small>{program.type}</small></div>
             <h3>{program.title}</h3>
             <p>{program.description}</p>
-            <span className="program-label">Programa académico</span>
+            <button type="button" className="program-admission-button" aria-label={'Solicitud de admisión · '+program.title} onClick={() => setAdmission(program.title)}>Solicitud de admisión<span className="sr-only"> · {program.title}</span><span aria-hidden="true"> ↗</span></button>
           </article>)}
         </div>
       </section>
@@ -146,6 +130,7 @@ export default function PublicSite() {
       </section>
     </main>
 
+    {admission!==null&&<AdmissionForm initialProgram={admission} onClose={()=>setAdmission(null)}/>}
     <footer className="public-footer">
       <div className="public-brand footer-brand"><span><b>San Angelo</b><small>Instituto de Ciencias Médicas</small></span></div>
       <p>Licenciaturas · Maestrías · Educación médica</p>

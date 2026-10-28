@@ -9,6 +9,7 @@ import ResourcePage from './ResourcePage.jsx';
 import OrganizationPage from './organization/OrganizationPage.jsx';
 import UsersPage from './admin/UsersPage.jsx';
 import AdminInfo from './admin/AdminInfo.jsx';
+import AdmissionsPage from './admissions/AdmissionsPage.jsx';
 import StudentPortal from './student/StudentPortal.jsx';
 import { Modal } from '../components/ui/Modal.jsx';
 import { SAN_ANGELO_LOGO } from './brand.js';
@@ -34,6 +35,7 @@ export default function Portal({ path, session }) {
   else if(selected?.type==='dashboard')content=<Dashboard user={session.user}/>;
   else if(selected?.type==='organization')content=<OrganizationPage access={access}/>;
   else if(selected?.type==='student')content=<StudentPortal view={selected.view} user={session.user}/>;
+  else if(selected?.type==='admissions')content=<AdmissionsPage/>;
   else if(selected?.type==='users')content=<UsersPage user={session.user}/>;
   else if(selected?.type==='roles'||selected?.type==='settings')content=<AdminInfo key={selected.type} type={selected.type}/>;
   return <div className="workspace"><button className="mobile-menu" aria-expanded={menu} aria-controls="mobile-admin-navigation" aria-haspopup="dialog" onClick={()=>setMenu(v=>!v)}>☰ Menú</button>

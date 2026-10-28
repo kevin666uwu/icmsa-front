@@ -136,3 +136,11 @@ fieldset{min-width:0}
  .campus-header{height:auto;min-height:72px;padding-top:10px;padding-bottom:10px}
  .campus-brand span{min-width:0}
 }
+
+.login-brand-panel{grid-column:1;grid-row:1}
+.login-form-panel{grid-column:2;grid-row:1}
+/* Mobile access starts with the form in both reading and visual order. */
+@media(max-width:900px){
+ .login-form-panel{grid-row:1;grid-column:1;min-height:100svh;align-content:center}
+ .login-brand-panel{grid-row:2;grid-column:1}
+}

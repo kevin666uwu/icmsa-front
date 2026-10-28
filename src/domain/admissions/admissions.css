@@ -1,0 +1,17 @@
+.program-admission-button{margin-top:auto;display:inline-flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:12px 16px;border:1px solid #d7b36880;border-radius:10px;background:#ffffff08;color:#f0c86f;font-size:.8rem;font-weight:750;text-align:left}
+.public-section-heading>div:last-child{max-width:460px}.public-section-heading>div:last-child>p{color:#aab8ca;line-height:1.7}.program-card .program-admission-button{margin-top:auto}.program-admission-button:hover{background:#ffffff14;border-color:#f0c86f}
+.admission-dialog{width:min(900px,94vw);background:#fff;color:#10243a}
+.admission-intro{max-width:68ch;color:#657486;line-height:1.7;font-size:.9rem}
+.admission-form fieldset{padding:20px;border:1px solid #ded7c9;border-radius:14px;margin:20px 0;background:#fff}
+.admission-form legend{padding:0 8px;font-size:.78rem;color:#987022;font-weight:800;letter-spacing:.02em}
+.admission-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.admission-form label{display:grid;gap:7px;font-size:.8rem;color:#31465c;min-width:0}
+.admission-form :is(input,select,textarea){width:100%;min-width:0;max-width:100%;padding:12px;border:1px solid #cdd6dc;border-radius:9px;color:#10243a;background:#fff;font:inherit;min-height:46px}
+.admission-form textarea{resize:vertical;line-height:1.65}
+.admission-full{grid-column:1/-1}.admission-hint{font-size:.75rem;color:#6d7c8b;line-height:1.7;margin:0}
+.admission-field-error{color:#953731;font-size:.78rem;margin:0}.admission-form input[aria-invalid=true]{border-color:#a54940}
+.admission-form .admission-consent{display:flex;align-items:flex-start;gap:12px;line-height:1.6;margin-top:16px}.admission-consent input{flex:0 0 22px;width:22px;height:22px;min-height:22px;margin-top:2px;accent-color:#102d47}
+.admission-actions{display:flex;flex-wrap:wrap;gap:12px;padding:8px 0 12px}.admission-actions button{min-height:48px}
+.admission-receipt{text-align:center;padding:24px 12px}.admission-receipt>strong{display:block;font-size:1.1rem;overflow-wrap:anywhere;color:#163b51;letter-spacing:.05em;margin:16px 0}.admission-receipt p{color:#647488;line-height:1.7}.admission-receipt-mark{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#edf4e9;color:#397342;font-size:1.6rem;margin-bottom:16px}
+.admission-detail dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.admission-detail dl>div{min-width:0;padding:12px;border:1px solid #e2e6e9;border-radius:9px}.admission-detail dt{font-size:.72rem;color:#6e7c8b}.admission-detail dd{margin:4px 0 0;overflow-wrap:anywhere;white-space:pre-wrap}.admission-motivation{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;background:#f8f6f0;padding:16px;border-radius:12px}
+@media(max-width:700px){.admission-fields,.admission-detail dl{grid-template-columns:1fr}.admission-form fieldset{padding:14px;margin:16px 0}.admission-form :is(input,select,textarea){font-size:16px}.admission-actions button{width:100%}.admission-dialog{width:96vw;max-width:96vw}.program-admission-button{width:100%;font-size:.85rem}.admission-intro{font-size:.82rem}}
