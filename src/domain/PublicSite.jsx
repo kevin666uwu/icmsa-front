@@ -26,7 +26,7 @@ const programs = [
 
 const values = ['Ética profesional','Excelencia académica','Vocación de servicio','Disciplina','Liderazgo','Innovación','Humanismo','Responsabilidad social'];
 
-export default function PublicSite({ signedIn = false }) {
+export default function PublicSite() {
   return <div className="public-site">
     <header className="public-nav">
       <a className="public-brand" href="#inicio" aria-label="Instituto de Ciencias Médicas San Angelo">
@@ -39,7 +39,6 @@ export default function PublicSite({ signedIn = false }) {
         <a href="#filosofia">Filosofía</a>
         <a href="#campus">Campus</a>
       </nav>
-      <a className="public-login" href={signedIn ? '/portal' : '/login'}>{signedIn ? 'Ir a ICMSA OS' : 'Acceso institucional'}</a>
     </header>
 
     <main className="public-main">
@@ -149,7 +148,7 @@ export default function PublicSite({ signedIn = false }) {
     <footer className="public-footer">
       <div className="public-brand footer-brand"><span><b>San Angelo</b><small>Instituto de Ciencias Médicas</small></span></div>
       <p>Licenciaturas · Maestrías · Educación médica</p>
-      <div><a href="https://institutosanangelo.com/" target="_blank" rel="noreferrer">Sitio actual</a><a href="/login">ICMSA OS</a></div>
+      <div><a href="https://institutosanangelo.com/" target="_blank" rel="noreferrer">Sitio institucional</a></div>
     </footer>
   </div>;
 }
