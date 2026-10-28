@@ -26,13 +26,11 @@ function UserEditor({ record, onClose, onSaved }) {
 
 function StudentProfileEditor({ user, onClose, onSaved }) {
   const load=useCallback(async signal=>{
-    const [profile,departments,areas,programs]=await Promise.all([
+    const [profile,programs]=await Promise.all([
       read('/users/'+user.id+'/student-profile',signal),
-      allRecords('/departments',signal),
-      allRecords('/areas',signal),
       allRecords('/academic/programs',signal),
     ]);
-    return {profile,departments,areas,programs};
+    return {profile,programs};
   },[user.id]);
   const remote=useRemote(load);
   if(remote.loading)return <Modal title={'Expediente · '+user.name} onClose={onClose}><LoadingState/></Modal>;
@@ -43,13 +41,11 @@ function StudentProfileEditor({ user, onClose, onSaved }) {
 function StudentProfileForm({ user, data, onClose, onSaved }) {
   const current=data.profile?.student||{};
   const names=(user.name||'').trim().split(/\s+/);
-  const [department,setDepartment]=useState(String(current.department_id||''));
   const action=useAction();
-  const areas=data.areas.filter(a=>!department||a.department_id===Number(department));
   return <Modal title={'Expediente de alumno · '+user.name} onClose={onClose}>
     <p className="modal-intro">Vincula esta cuenta con su expediente académico. La matrícula será la llave del portal del alumno.</p>
     <form className="entity-form" onSubmit={e=>{e.preventDefault();const raw=Object.fromEntries(new FormData(e.currentTarget));const payload={
-      department_id:Number(raw.department_id),area_id:Number(raw.area_id),student_number:raw.student_number.trim(),
+      student_number:raw.student_number.trim(),
       first_name:raw.first_name.trim(),last_name:raw.last_name.trim(),second_last_name:raw.second_last_name.trim()||null,
       email:raw.email.trim()||user.email,phone:raw.phone.trim()||null,curp:raw.curp.trim()||null,birth_date:raw.birth_date||null,
       status:raw.status,program_id:raw.program_id?Number(raw.program_id):null,
@@ -60,8 +56,6 @@ function StudentProfileForm({ user, data, onClose, onSaved }) {
       <label>Primer apellido<input name="last_name" defaultValue={current.last_name||names.slice(1,2).join(' ')||'Alumno'} required/></label>
       <label>Segundo apellido<input name="second_last_name" defaultValue={current.second_last_name||''}/></label>
       <label>Programa<select name="program_id" defaultValue={current.program_id||''}><option value="">Por asignar</option>{data.programs.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
-      <label>Departamento<select name="department_id" value={department} onChange={e=>setDepartment(e.target.value)} required><option value="">Seleccionar…</option>{data.departments.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}</select></label>
-      <label>Área<select name="area_id" defaultValue={current.area_id||''} required><option value="">Seleccionar…</option>{areas.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></label>
       <label>Teléfono<input name="phone" defaultValue={current.phone||''}/></label>
       <label>CURP<input name="curp" maxLength={18} defaultValue={current.curp||''}/></label>
       <label>Fecha de nacimiento<input name="birth_date" type="date" defaultValue={current.birth_date||''}/></label>
