@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 640" role="img" aria-labelledby="title">
+<title>Instituto de Ciencias Médicas San Angelo</title>
+<defs>
+  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffd05a"/><stop offset=".45" stop-color="#e7a21d"/><stop offset="1" stop-color="#9d6500"/>
+  </linearGradient>
+</defs>
+<g fill="none" stroke="url(#g)" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke-width="11" d="M58 132h396M86 132l170-72 170 72M256 36v26"/>
+  <path stroke-width="7" d="M248 36l8-17 8 17-8 13zM238 58l18-20 18 20-18 26z"/>
+  <path stroke-width="9" d="M66 151h380M72 171h368M78 191h356"/>
+  <path stroke-width="9" d="M90 206v250l166 137 166-137V206"/>
+  <path stroke-width="6" d="M104 220v222l152 124 152-124V220"/>
+  <g stroke-width="8">
+    <path d="M121 220v198M139 220v198M157 220v198"/>
+    <path d="M355 220v198M373 220v198M391 220v198"/>
+    <path d="M186 220v122M202 220v122M310 220v122M326 220v122"/>
+  </g>
+  <path stroke-width="13" d="M256 202v315"/>
+  <path stroke-width="14" d="M256 292c-48 0-77-34-77-76M256 292c48 0 77-34 77-76"/>
+  <path stroke-width="14" d="M256 362c-58 0-86 30-86 68 0 38 35 64 86 64M256 362c58 0 86 30 86 68 0 38-35 64-86 64"/>
+  <path stroke-width="8" d="M256 170v30M239 185h34"/>
+  <path stroke-width="6" d="M86 132v-32M86 100l-12 14M86 100l12 14M426 132v-32M426 100l-12 14M426 100l12 14"/>
+</g>
+</svg>
