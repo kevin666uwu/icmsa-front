@@ -1,5 +1,14 @@
+const studentNavigation = [
+  { path: '/portal', label: 'Inicio', group: 'Mi aula', type: 'student', view: 'overview' },
+  { path: '/portal/mis-clases', label: 'Mis clases', group: 'Mi aula', type: 'student', view: 'classes' },
+  { path: '/portal/avance', label: 'Mi avance', group: 'Mi carrera', type: 'student', view: 'progress' },
+  { path: '/portal/carrera', label: 'Mi carrera', group: 'Mi carrera', type: 'student', view: 'program' },
+  { path: '/portal/profesores', label: 'Profesores', group: 'Mi carrera', type: 'student', view: 'teachers' },
+  { path: '/portal/pagos', label: 'Pagos y saldo', group: 'Servicios', type: 'student', view: 'finance' },
+];
+
 export const navigation = [
-  { path: '/portal', label: 'Inicio', group: 'ICMSA OS', type: 'dashboard' },
+  { path: '/portal', label: 'Inicio', group: 'Institución', type: 'dashboard' },
   { path: '/portal/personal', label: 'Personal', group: 'Organización', resource: 'employees' },
   { path: '/portal/organigrama', label: 'Organigrama', group: 'Organización', permission: 'organization.read', type: 'organization' },
   { path: '/portal/organizacion/departamentos', label: 'Departamentos', group: 'Organización', resource: 'departments' },
@@ -19,6 +28,8 @@ export const navigation = [
   { path: '/admin/roles', label: 'Roles y permisos', group: 'Administración', permission: 'users.read', type: 'roles' },
   { path: '/admin/configuracion', label: 'Configuración', group: 'Administración', permission: 'users.read', type: 'settings' },
 ];
+
 export function visibleNavigation(access) {
+  if (access.role === 'student') return studentNavigation;
   return navigation.filter(item => item.resource ? Boolean(access.resources[item.resource]) : !item.permission || access.permissions.includes(item.permission));
 }
