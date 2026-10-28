@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRemote } from '../hooks/useRemote.js';
 import { LoadingState, ErrorState } from '../components/feedback/AsyncState.jsx';
 import { read } from './api.js';
@@ -14,6 +14,10 @@ import { SAN_ANGELO_LOGO } from './brand.js';
 const load=signal=>read('/access',signal);
 export default function Portal({ path, session }) {
   const remote=useRemote(load),[menu,setMenu]=useState(false);
+  useEffect(()=>{
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+    document.querySelector('.workspace-content')?.scrollTo({top:0,left:0,behavior:'auto'});
+  },[path]);
   if(remote.loading)return <LoadingState label="Cargando acceso institucional…"/>;
   if(remote.error)return <ErrorState message={remote.error} onRetry={remote.refresh}/>;
   const access=remote.data,items=visibleNavigation(access),selected=items.find(i=>i.path===path||(path==='/admin'&&i.type==='users'));
