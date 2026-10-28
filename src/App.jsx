@@ -23,7 +23,11 @@ export default function App() {
     if(!shortcut){shortcut=document.createElement('link');shortcut.rel='shortcut icon';document.head.appendChild(shortcut);}
     shortcut.href=SAN_ANGELO_LOGO;
   },[]);
-  useEffect(()=>{document.getElementById('main-content')?.focus();},[path]);
+  useEffect(()=>{
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.querySelector('.workspace-content')?.scrollTo?.({ top: 0, left: 0, behavior: 'auto' });
+    document.getElementById('main-content')?.focus({ preventScroll: true });
+  },[path]);
   let content;
   if(path==='/'||path==='/inicio')content=<PublicSite/>;
   else if(session.loading)content=<LoadingState label="Comprobando sesión…"/>;
