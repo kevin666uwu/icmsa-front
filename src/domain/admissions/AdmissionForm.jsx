@@ -23,7 +23,7 @@ export default function AdmissionForm({ initialProgram='', onClose }){
  }
  return <Modal title="Solicitud de admisión" className="admission-dialog" onClose={onClose}>
   {receipt?<section className="admission-receipt" role="status"><span className="admission-receipt-mark" aria-hidden="true">✓</span><h2>Recibimos tu solicitud</h2><p>Conserva tu folio:</p><strong>{receipt.folio}</strong><p>El equipo de admisiones revisará tu información y podrá contactarte por los medios que registraste. El envío no confirma la admisión ni crea una cuenta de alumno.</p><button className="button primary" onClick={onClose}>Cerrar solicitud</button></section>:<>
-   <p className="admission-intro">Cuéntanos sobre ti y da el primer paso para formar parte de San Angelo. Los campos marcados con * son obligatorios.</p>
+   <p className="admission-intro">Cuéntanos sobre ti y da el primer paso para formar parte de San Ángelo. Los campos marcados con * son obligatorios.</p>
    <form className="admission-form" onSubmit={submit}>
     <fieldset disabled={action.busy}><legend>01 · Programa de interés</legend><label>Programa académico *<select name="program" required defaultValue={initialProgram}><option value="">Selecciona un programa</option>{programs.map(p=><option key={p.title}>{p.title}</option>)}</select></label></fieldset>
     <fieldset disabled={action.busy}><legend>02 · Datos personales</legend><div className="admission-fields">
@@ -50,7 +50,7 @@ export default function AdmissionForm({ initialProgram='', onClose }){
      <label>Escala del promedio *<select name="average_scale" value={scale} onChange={e=>setScale(e.target.value)}><option value="10">De 0 a 10</option><option value="100">De 0 a 100</option></select></label>
      <label>Promedio obtenido o actual *<input name="average" type="number" required min="0" max={scale} step="0.01" inputMode="decimal"/></label>
     </div></fieldset>
-    <fieldset disabled={action.busy}><legend>05 · Tu motivación</legend><label>¿Por qué quieres ingresar a San Angelo? *<textarea name="motivation" required minLength={30} maxLength={5000} rows={6} placeholder="Cuéntanos tus motivos, intereses y metas académicas."/></label><p className="admission-hint">Entre 30 y 5,000 caracteres.</p></fieldset>
+    <fieldset disabled={action.busy}><legend>05 · Tu motivación</legend><label>¿Por qué quieres ingresar a San Ángelo? *<textarea name="motivation" required minLength={30} maxLength={5000} rows={6} placeholder="Cuéntanos tus motivos, intereses y metas académicas."/></label><p className="admission-hint">Entre 30 y 5,000 caracteres.</p></fieldset>
     <fieldset disabled={action.busy}><legend>06 · Autorización</legend><p className="admission-hint">ICMSA utilizará los datos de esta solicitud para evaluar tu interés de ingreso y contactarte. La solicitud será consultada por personal administrativo autorizado.</p><label className="admission-consent"><input type="checkbox" name="consent" required/><span>Autorizo el uso de mis datos para gestionar esta solicitud de admisión y ser contactado al respecto. *</span></label></fieldset>
     {action.error&&<ErrorState message={action.error}/>}
     <div className="admission-actions"><button type="submit" className="button primary" disabled={action.busy}>{action.busy?'Enviando solicitud…':'Enviar solicitud de admisión'}</button><button type="button" className="button secondary" disabled={action.busy} onClick={onClose}>Cancelar</button></div>

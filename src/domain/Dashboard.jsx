@@ -5,7 +5,7 @@ const load=signal=>read('/dashboard',signal);
 const labels={active_students:'Alumnos activos',active_employees:'Personal activo',active_processes:'Procesos activos',open_requests:'Trámites abiertos',open_cases:'Casos estudiantiles',indicators_on_target:'Indicadores en meta',indicators_below_target:'Indicadores fuera de meta',indicators_without_measurement:'Sin medición'};
 export default function Dashboard({ user }) {
   const remote=useRemote(load);
-  return <section><div className="page-heading"><div><p className="eyebrow">Instituto de Ciencias Médicas San Angelo</p><h1>Tu institución, en perspectiva.</h1><p>Hola, {user.name}. Información operativa dentro de tu alcance autorizado.</p></div><span className="brand-badge">ICMSA OS</span></div>
+  return <section><div className="page-heading"><div><p className="eyebrow">Instituto de Ciencias Médicas San Ángelo</p><h1>Tu institución, en perspectiva.</h1><p>Hola, {user.name}. Información operativa dentro de tu alcance autorizado.</p></div><span className="brand-badge">ICMSA OS</span></div>
     {remote.loading?<LoadingState/>:remote.error?<ErrorState message={remote.error} onRetry={remote.refresh}/>:<>
       <div className="metrics">{Object.entries(labels).filter(([key])=>remote.data[key]!==null).map(([key,label])=><article className="metric" key={key}><span>{label}</span><strong>{remote.data[key]}</strong><small>Información registrada</small></article>)}</div>
       {remote.data.attendance&&<section className="panel"><h2>Asistencia del día</h2><div className="metrics compact">{Object.entries({present:'Presentes',absent:'Ausentes',late:'Retardos',incidents:'Incidencias',attendance_percentage:'Asistencia %'}).map(([key,label])=><article key={key}><span>{label}</span><strong>{remote.data.attendance[key]??'—'}</strong></article>)}</div><p className="muted">{remote.data.attendance.denominator}</p></section>}
@@ -16,3 +16,4 @@ export default function Dashboard({ user }) {
     </>}
   </section>;
 }
+

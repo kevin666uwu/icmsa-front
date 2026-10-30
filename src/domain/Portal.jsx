@@ -39,7 +39,7 @@ export default function Portal({ path, session }) {
   else if(selected?.type==='users')content=<UsersPage user={session.user}/>;
   else if(selected?.type==='roles'||selected?.type==='settings')content=<AdminInfo key={selected.type} type={selected.type}/>;
   return <div className="workspace"><button className="mobile-menu" aria-expanded={menu} aria-controls="mobile-admin-navigation" aria-haspopup="dialog" onClick={()=>setMenu(v=>!v)}>☰ Menú</button>
-    <aside id="sidebar" className="sidebar"><div className="sidebar-brand"><img src={SAN_ANGELO_LOGO} alt="" /><div><b>San Angelo</b><span>Instituto de Ciencias Médicas</span></div></div>
+    <aside id="sidebar" className="sidebar"><div className="sidebar-brand"><img src={SAN_ANGELO_LOGO} alt="" /><div><b>San Ángelo</b><span>Instituto de Ciencias Médicas</span></div></div>
       <nav aria-label="Módulos institucionales">{links}</nav><div className="sidebar-account"><strong>{session.user.name}</strong><span>{access.role}</span></div>
     </aside><div className="workspace-content">{content}</div>{menu&&<Modal title="Menú institucional" className="mobile-navigation" onClose={()=>setMenu(false)}><nav id="mobile-admin-navigation" className="mobile-admin-links" aria-label="Módulos institucionales">{links}</nav><p className="mobile-admin-account">{session.user.name} · {access.role}</p></Modal>}</div>;
 }

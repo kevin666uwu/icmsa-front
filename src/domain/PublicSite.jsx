@@ -13,9 +13,9 @@ export default function PublicSite() {
   const [admission, setAdmission] = useState(null);
   return <div className="public-site">
     <header className="public-nav" onKeyDown={e => { if (e.key === 'Escape') { setMenu(false); document.getElementById('public-menu-toggle')?.focus(); } }}>
-      <a className="public-brand" href="#inicio" aria-label="Instituto de Ciencias Médicas San Angelo">
+      <a className="public-brand" href="#inicio" aria-label="Instituto de Ciencias Médicas San Ángelo">
         <img src={SAN_ANGELO_LOGO} alt="" />
-        <span><b>San Angelo</b><small>Instituto de Ciencias Médicas</small></span>
+        <span><b>San Ángelo</b><small>Instituto de Ciencias Médicas</small></span>
       </a>
       <button id="public-menu-toggle" className="public-menu-toggle" aria-expanded={menu} aria-controls="public-navigation" onClick={() => setMenu(v => !v)}>Menú</button>
       <nav id="public-navigation" className={menu ? 'is-open' : ''} aria-label="Navegación institucional" onClick={e => { if (e.target.closest('a')) setMenu(false); }}>
@@ -55,7 +55,7 @@ export default function PublicSite() {
           <h2>Conocimiento riguroso. Decisiones responsables. Servicio a las personas.</h2>
         </div>
         <div className="public-intro-copy">
-          <p>San Angelo impulsa una formación integral basada en conocimiento científico, innovación, investigación y desarrollo de habilidades profesionales.</p>
+          <p>San Ángelo impulsa una formación integral basada en conocimiento científico, innovación, investigación y desarrollo de habilidades profesionales.</p>
           <p>El claustro académico integra médicos militares que aportan experiencia, disciplina, liderazgo, ética profesional y capacidad para tomar decisiones en entornos de alta exigencia.</p>
         </div>
       </section>
@@ -112,12 +112,12 @@ export default function PublicSite() {
 
       <section className="public-campus" id="campus">
         <div>
-          <p className="public-kicker">Campus San Angelo</p>
+          <p className="public-kicker">Campus San Ángelo</p>
           <h2>Un espacio para aprender medicina con exigencia, tecnología y propósito.</h2>
-          <p>Instituto de Ciencias Médicas San Angelo · Coacalco de Berriozábal, Estado de México.</p>
+          <p>Instituto de Ciencias Médicas San Ángelo · Coacalco de Berriozábal, Estado de México.</p>
         </div>
         <div className="public-campus-card">
-          <span>Instituto San Angelo</span>
+          <span>Instituto San Ángelo</span>
           <strong>Educación que impulsa tu futuro.</strong>
           <span className="campus-note">Información institucional disponible en esta plataforma.</span>
         </div>
@@ -125,16 +125,16 @@ export default function PublicSite() {
 
       <section className="public-final-cta">
         <img src={SAN_ANGELO_LOGO} alt="" />
-        <div><p className="public-kicker">Instituto de Ciencias Médicas San Angelo</p><h2>La medicina necesita conocimiento. También carácter.</h2></div>
+        <div><p className="public-kicker">Instituto de Ciencias Médicas San Ángelo</p><h2>La medicina necesita conocimiento. También carácter.</h2></div>
         <a className="public-button light" href="#programas">Explorar programas</a>
       </section>
     </main>
 
     {admission!==null&&<AdmissionForm initialProgram={admission} onClose={()=>setAdmission(null)}/>}
     <footer className="public-footer">
-      <div className="public-brand footer-brand"><span><b>San Angelo</b><small>Instituto de Ciencias Médicas</small></span></div>
+      <div className="public-brand footer-brand"><span><b>San Ángelo</b><small>Instituto de Ciencias Médicas</small></span></div>
       <p>Licenciaturas · Maestrías · Educación médica</p>
-      <div><span>Instituto de Ciencias Médicas San Angelo</span></div>
+      <div><span>Instituto de Ciencias Médicas San Ángelo</span></div>
     </footer>
   </div>;
 }

@@ -1,6 +1,6 @@
 # ICMSA OS — Portal institucional
 
-Instituto de Ciencias Médicas San Angelo. React + Vite, base oficial WEB MODEL 1.1.0.
+Instituto de Ciencias Médicas San Ángelo. React + Vite, base oficial WEB MODEL 1.1.0.
 [Procedencia](docs/WEB_MODEL_PROVENANCE.md) · [Arquitectura y Vercel](docs/ICMSA_FRONTEND.md).
 
 ## Validación
@@ -37,3 +37,4 @@ No se copiaron componentes de producto ASIDEK/KPIS.
 Vite, Vitest y source-map-js se actualizaron en el runner GitHub para resolver
 avisos detectados al importar la base oficial. El lockfile conserva versiones e integridad.
 No se deshabilitó la auditoría ni se eliminaron pruebas heredadas.
+
