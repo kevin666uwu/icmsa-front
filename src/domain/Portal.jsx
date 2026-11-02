@@ -1,3 +1,4 @@
+import Documents from './documents/Documents.jsx';
 import { useEffect, useState } from 'react';
 import { useRemote } from '../hooks/useRemote.js';
 import { LoadingState, ErrorState } from '../components/feedback/AsyncState.jsx';
@@ -35,6 +36,7 @@ export default function Portal({ path, session }) {
   else if(selected?.type==='dashboard')content=<Dashboard user={session.user}/>;
   else if(selected?.type==='organization')content=<OrganizationPage access={access}/>;
   else if(selected?.type==='student')content=<StudentPortal view={selected.view} user={session.user}/>;
+  else if(selected?.type==='documents')content=<Documents admin/>;
   else if(selected?.type==='admissions')content=<AdmissionsPage/>;
   else if(selected?.type==='users')content=<UsersPage user={session.user}/>;
   else if(selected?.type==='roles'||selected?.type==='settings')content=<AdminInfo key={selected.type} type={selected.type}/>;

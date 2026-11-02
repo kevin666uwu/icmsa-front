@@ -1,0 +1,22 @@
+import { useState } from 'react';
+import { useRemote } from '../../hooks/useRemote.js';
+import { read, write } from '../api.js';
+import { LoadingState, ErrorState } from '../../components/feedback/AsyncState.jsx';
+const load=signal=>read('/student-portal/documents',signal);
+const loadQueue=signal=>read('/document-validations',signal);
+const kinds={curp:'CURP',birth_certificate:'Acta de nacimiento',academic_certificate:'Certificado académico',identity:'Identificación',other:'Otro'};
+function Report({report}){return <div><strong>{report.status==='inconsistent'?'Con inconsistencias':'Requiere revisión'}</strong><p>Autenticidad oficial pendiente. RENAPO aún no está conectado.</p><ul>{report.checks.map(c=><li key={c.code}>{c.detail}{c.status==='inconsistent'?' — Revisa los datos.':''}</li>)}</ul><small>Referencia del archivo: {report.sha256.slice(0,16)} · {report.engine_version}</small></div>;}
+export default function Documents({admin=false}){
+  const remote=useRemote(admin?loadQueue:load),[busy,setBusy]=useState(false),[error,setError]=useState(''),[message,setMessage]=useState('');
+  async function submit(event){event.preventDefault();const form=event.currentTarget,data={get:name=>form.elements.namedItem(name).value},file=form.elements.namedItem('file').files[0];setError('');setMessage('');
+    if(!file?.size||file.size>2*1024*1024){setError('Selecciona un PDF, PNG o JPEG de hasta 2 MB.');return;}
+    setBusy(true);try{const content=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.onerror=()=>reject(new Error('No se pudo leer el archivo.'));reader.readAsDataURL(file);});
+      await write('/student-portal/documents',{kind:data.get('kind'),media_type:file.type,content_base64:content,curp:data.get('curp')?.trim().toUpperCase()||null,birth_date:data.get('birth_date')||null});form.reset();setMessage('Documento recibido. Las comprobaciones iniciales no acreditan autenticidad.');remote.refresh();
+    }catch(e){setError(e.message);}finally{setBusy(false);}}
+  async function download(row){setError('');try{const result=await read('/document-validations/'+row.id+'/file');const bytes=Uint8Array.from(atob(result.content_base64),c=>c.charCodeAt(0));const url=URL.createObjectURL(new Blob([bytes],{type:'application/octet-stream'}));const a=document.createElement('a');a.href=url;a.download='documento-'+row.id+({ 'application/pdf':'.pdf','image/png':'.png','image/jpeg':'.jpg'}[result.media_type]);a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){setError(e.message);}}
+  return <section className="campus-page"><p className="campus-kicker">Expediente digital · ASIDEK</p><h1>{admin?'Revisión documental':'Mis documentos'}</h1><p>Recepción y comprobaciones iniciales. La extracción automática, revisión de firmas y consulta al emisor están pendientes de incorporación.</p>
+    {!admin&&<form className="campus-card" onSubmit={submit}><fieldset disabled={busy}><legend>Cargar documento</legend><p><label>Tipo de documento <select name="kind">{Object.entries(kinds).map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></label></p><p><label>Archivo (PDF, PNG o JPEG; máximo 2 MB) <input required name="file" type="file" accept="application/pdf,image/png,image/jpeg"/></label></p><p><label>CURP declarada (opcional) <input name="curp" minLength={18} maxLength={18} autoCapitalize="characters"/></label></p><p><label>Fecha de nacimiento para comprobar la CURP <input name="birth_date" type="date"/></label></p><p>El documento se incorpora a tu expediente para revisión por administración. No se envía a servicios externos de IA.</p><button type="submit">{busy?'Enviando documento…':'Enviar documento'}</button></fieldset></form>}
+    {error&&<p role="alert">{error}</p>}{message&&<p role="status">{message}</p>}
+    {remote.loading?<LoadingState/>:remote.error?<ErrorState message={remote.error} onRetry={remote.refresh}/>:<div>{remote.data.items.length===0?<p>Aún no hay documentos recibidos.</p>:remote.data.items.map(row=><article className="campus-card" key={row.id}><h2>{kinds[row.kind]} · #{row.id}</h2>{admin&&<p>Expediente de alumno #{row.student_id}</p>}<Report report={row.report}/>{admin&&<button onClick={()=>download(row)}>Descargar para revisión</button>}</article>)}{admin&&remote.data.items.length===50&&<p>Se muestran los 50 documentos más recientes.</p>}</div>}
+  </section>;
+}

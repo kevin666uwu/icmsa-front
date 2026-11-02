@@ -11,6 +11,7 @@ export const studentNavigation = [
 ];
 
 export const navigation = [
+  { path: '/admin/documentos', label: 'Revisión documental', group: 'Administración', permission: 'documents.read', type: 'documents' },
   { path: '/admin/admision', label: 'Solicitudes de admisión', group: 'Admisión', permission: 'admissions.read', type: 'admissions' },
   { path: '/admin/biblioteca', label: 'Biblioteca digital', group: 'Administración', resource: 'library_resources' },
   { path: '/portal', label: 'Inicio', group: 'Institución', type: 'dashboard' },
