@@ -1,0 +1,14 @@
+[
+  ".web-model-version",
+  "src/core/publicEnvironment.js",
+  "src/core/config.js",
+  "tests/public-environment.test.js",
+  "vite.config.js",
+  "package-lock.json",
+  "docs/audit/2026-11-02/baseline.json",
+  "docs/audit/2026-11-02/ENVIRONMENT_MATRIX.md",
+  "docs/MIGRATION_1_2_0.md",
+  "docs/audit/2026-11-02/MIGRATION.md",
+  "docs/domain/model-versions.md",
+  "docs/audit/2026-11-02/changed-paths.json"
+]

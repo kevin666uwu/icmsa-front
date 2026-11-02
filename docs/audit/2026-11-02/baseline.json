@@ -1,0 +1,639 @@
+{
+  "repo": "kevin666uwu/icmsa-front",
+  "sha": "909a268c0cf6da17e3d60586d09a8e9a5fdb60e0",
+  "modelVersion": "1.1.0",
+  "routes": [],
+  "prefixes": [],
+  "screens": [
+    {
+      "file": "tests/login-routing.test.jsx",
+      "path": "/login"
+    },
+    {
+      "file": "tests/ui.test.jsx",
+      "path": "/portal"
+    },
+    {
+      "file": "tests/ui.test.jsx",
+      "path": "/admin"
+    },
+    {
+      "file": "src/app/router/navigation.js",
+      "path": "/admin/"
+    },
+    {
+      "file": "src/app/router/navigation.js",
+      "path": "/portal/"
+    },
+    {
+      "file": "src/domain/Dashboard.jsx",
+      "path": "/dashboard"
+    },
+    {
+      "file": "src/domain/admin/UsersPage.jsx",
+      "path": "/areas"
+    },
+    {
+      "file": "tests/login-routing.test.jsx",
+      "path": "/portal/biblioteca"
+    },
+    {
+      "file": "src/domain/student/StudentPortal.jsx",
+      "path": "/portal/mis-clases"
+    },
+    {
+      "file": "src/domain/student/StudentPortal.jsx",
+      "path": "/portal/avance"
+    },
+    {
+      "file": "src/domain/student/StudentPortal.jsx",
+      "path": "/portal/carrera"
+    },
+    {
+      "file": "src/domain/student/StudentPortal.jsx",
+      "path": "/portal/profesores"
+    },
+    {
+      "file": "src/domain/student/StudentPortal.jsx",
+      "path": "/portal/pagos"
+    },
+    {
+      "file": "src/domain/student/StudentPortal.jsx",
+      "path": "/portal/tramites"
+    },
+    {
+      "file": "src/domain/student/StudentPortal.jsx",
+      "path": "/portal/documentos"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/admin/documentos"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/admin/admision"
+    },
+    {
+      "file": "tests/library.test.jsx",
+      "path": "/admin/biblioteca"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/personal"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/organigrama"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/organizacion/departamentos"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/organizacion/areas"
+    },
+    {
+      "file": "src/domain/organization/OrganizationPage.jsx",
+      "path": "/portal/organizacion/puestos"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/procesos"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/indicadores"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/asistencia"
+    },
+    {
+      "file": "tests/icmsa.test.jsx",
+      "path": "/portal/alumnos"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/academia/programas"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/academia/periodos"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/academia/materias"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/academia/grupos"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/servicios-escolares"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/portal/servicios-estudiantiles"
+    },
+    {
+      "file": "tests/login-routing.test.jsx",
+      "path": "/admin/usuarios"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/admin/roles"
+    },
+    {
+      "file": "src/domain/navigation.js",
+      "path": "/admin/configuracion"
+    }
+  ],
+  "tests": [
+    "tests/admissions.test.jsx",
+    "tests/api.test.js",
+    "tests/archangel-loader.test.jsx",
+    "tests/email-verification.test.jsx",
+    "tests/icmsa.test.jsx",
+    "tests/library.test.jsx",
+    "tests/login-routing.test.jsx",
+    "tests/mobile-navigation.test.jsx",
+    "tests/setup.js",
+    "tests/ui.test.jsx"
+  ],
+  "schema": [],
+  "configFiles": [
+    ".env.example",
+    ".github/workflows/ci.yml",
+    "eslint.config.js",
+    "src/core/config.js",
+    "vite.config.js"
+  ],
+  "environments": [
+    {
+      "name": "VITE_BACKEND_URL",
+      "sources": [
+        ".env.example",
+        "src/core/config.js"
+      ],
+      "classification": "public-or-operational",
+      "provider": "NOT_VERIFIED"
+    },
+    {
+      "name": "VITE_API_TIMEOUT_MS",
+      "sources": [
+        ".env.example",
+        "src/core/config.js"
+      ],
+      "classification": "public-or-operational",
+      "provider": "NOT_VERIFIED"
+    }
+  ],
+  "tracked": [
+    {
+      "path": ".env.example",
+      "sha": "229456152a98e2d0c41069e8655a2f00546da896",
+      "size": 65
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha": "4dfc9a245de6f551f29405bdc54a118c95ceb11c",
+      "size": 432
+    },
+    {
+      "path": ".gitignore",
+      "sha": "857c43b4842fb99306256499d7666fc1f9fd3ace",
+      "size": 64
+    },
+    {
+      "path": ".web-model-version",
+      "sha": "9084fa2f716a7117829f3f32a5f4cef400e02903",
+      "size": 6
+    },
+    {
+      "path": "README.md",
+      "sha": "10c89cf40055a09323e9427aa5937b84ef11220f",
+      "size": 1775
+    },
+    {
+      "path": "docs/ICMSA_FRONTEND.md",
+      "sha": "3dca7195b2861f4881fbe6242177f8f5cfa52d40",
+      "size": 1340
+    },
+    {
+      "path": "docs/MOBILE_QA.md",
+      "sha": "0797f57bb79aec74734a2346d2a1801fc84722b6",
+      "size": 1632
+    },
+    {
+      "path": "docs/WEB_MODEL_PROVENANCE.md",
+      "sha": "19a87f4f546979cb5dc1b5a256ed2b734487f63b",
+      "size": 412
+    },
+    {
+      "path": "eslint.config.js",
+      "sha": "ce983aeac582e2d827b8341890390599b7290145",
+      "size": 876
+    },
+    {
+      "path": "index.html",
+      "sha": "21ceac7f71412cb3665b21bd46ca1d6024655c68",
+      "size": 610
+    },
+    {
+      "path": "package-lock.json",
+      "sha": "895525a031323577cd8953b1ce1db4ed48eaa7de",
+      "size": 127992
+    },
+    {
+      "path": "package.json",
+      "sha": "73a8b97d086326f58423c11303d5d6676534bfe9",
+      "size": 897
+    },
+    {
+      "path": "public/san-angelo-logo.png",
+      "sha": "0f8c36575baa6e70384f23710685c499658a4e60",
+      "size": 387599
+    },
+    {
+      "path": "public/san-angelo-logo.svg",
+      "sha": "4fec7ee5256632eda0aca5d1067e75ade7521f8a",
+      "size": 1422
+    },
+    {
+      "path": "scripts/compliance.mjs",
+      "sha": "1a3572880184a471eaba01a9c067d26eed81e762",
+      "size": 1312
+    },
+    {
+      "path": "src/App.jsx",
+      "sha": "90a90047d29bb6d7b67f0045dcaae5fb026951a1",
+      "size": 3940
+    },
+    {
+      "path": "src/app/router/navigation.js",
+      "sha": "de1f7737c5737d5f30e6ee251ff7a9091a8ecc57",
+      "size": 935
+    },
+    {
+      "path": "src/components/feedback/ArchangelLoader.jsx",
+      "sha": "e0aacb003063acc227d2b4fe7c3ccdf5f85c48b7",
+      "size": 8984
+    },
+    {
+      "path": "src/components/feedback/AsyncState.jsx",
+      "sha": "85250aecc84356bbc4a58343a91c2e79a13df950",
+      "size": 808
+    },
+    {
+      "path": "src/components/feedback/archangel-loader.css",
+      "sha": "7430942fcb7340202d5d9f1775f0cafb317f761a",
+      "size": 664
+    },
+    {
+      "path": "src/components/ui/Modal.jsx",
+      "sha": "cd3a90a5a86286ae1857c5b9ac60e921f3272e1e",
+      "size": 1010
+    },
+    {
+      "path": "src/components/ui/Primitives.jsx",
+      "sha": "570dcca678fb1aebd1314e269c9946efc64a66a5",
+      "size": 2748
+    },
+    {
+      "path": "src/core/config.js",
+      "sha": "13f794b4de89801f8e5aacefe0394a388db7ceb1",
+      "size": 610
+    },
+    {
+      "path": "src/core/project.js",
+      "sha": "187aeaf563d537c64664eeeb24dd18904f9c1026",
+      "size": 421
+    },
+    {
+      "path": "src/domain/Dashboard.jsx",
+      "sha": "9b61314e17b8fb46676af6332004be0855ca5023",
+      "size": 2942
+    },
+    {
+      "path": "src/domain/Portal.jsx",
+      "sha": "27779094084e7eb641e2504d25c7015a54ca6d5a",
+      "size": 3943
+    },
+    {
+      "path": "src/domain/PublicSite.jsx",
+      "sha": "74848daaae83a04560dc6632a2a2ea0b4bb325df",
+      "size": 8194
+    },
+    {
+      "path": "src/domain/ResourceForm.jsx",
+      "sha": "67a9cf78afc32407fbe3f571de592bfbdd866d1d",
+      "size": 4219
+    },
+    {
+      "path": "src/domain/ResourcePage.jsx",
+      "sha": "b73e511a0f761b7ada74fec79567627c5b000049",
+      "size": 4556
+    },
+    {
+      "path": "src/domain/academicPrograms.js",
+      "sha": "e11c609ea631e9c0d2205b4e1f5962c4848dfd92",
+      "size": 707
+    },
+    {
+      "path": "src/domain/admin/AdminInfo.jsx",
+      "sha": "a3c431d7df7ec37b7fd4de9d86ae0dd9c0af6167",
+      "size": 1336
+    },
+    {
+      "path": "src/domain/admin/UsersPage.jsx",
+      "sha": "3008780e7ccf99ef6539ebc42a16eef9365892c6",
+      "size": 9866
+    },
+    {
+      "path": "src/domain/admissions/AdmissionForm.jsx",
+      "sha": "6d5e2b239ee1e4f45dee310284b7d07794c34bd1",
+      "size": 7566
+    },
+    {
+      "path": "src/domain/admissions/AdmissionsPage.jsx",
+      "sha": "641966139ab488c066479552ca12efbcc698a25f",
+      "size": 5694
+    },
+    {
+      "path": "src/domain/admissions/admissions.css",
+      "sha": "f2bafe5bc19d8c871b59e7283104d01d6f08841d",
+      "size": 3143
+    },
+    {
+      "path": "src/domain/admissions/curp.js",
+      "sha": "fc0fed6e42e240967c891d41d89d668c72e2bbb7",
+      "size": 1157
+    },
+    {
+      "path": "src/domain/api.js",
+      "sha": "4f104947a7a0d275b14cba4084ac3f0c1a83a56a",
+      "size": 765
+    },
+    {
+      "path": "src/domain/brand.js",
+      "sha": "40ab79fa03f8e04d6d27fbc92dbb3c512a252f2e",
+      "size": 42252
+    },
+    {
+      "path": "src/domain/documents/Documents.jsx",
+      "sha": "1926c742948fb5382d6a574ad161a4aeea220ddc",
+      "size": 4446
+    },
+    {
+      "path": "src/domain/documents/Documents.test.jsx",
+      "sha": "fb16c80d98c84a852135f166a69bee7105c052c2",
+      "size": 1197
+    },
+    {
+      "path": "src/domain/indicators/IndicatorHistory.jsx",
+      "sha": "79de3ff38cafff18cc5403114be7eaf8c67bd707",
+      "size": 2101
+    },
+    {
+      "path": "src/domain/institutional.css",
+      "sha": "75db10bac89c32d2abd959188fb6bf4601705766",
+      "size": 34152
+    },
+    {
+      "path": "src/domain/navigation.js",
+      "sha": "ad39ac041a779fb983aa8787db37e1506ce098dc",
+      "size": 3789
+    },
+    {
+      "path": "src/domain/organization/EmployeeDetail.jsx",
+      "sha": "0ba46559b7cebbc8f612fd33b12c37fc259e8f2f",
+      "size": 2333
+    },
+    {
+      "path": "src/domain/organization/OrganizationPage.jsx",
+      "sha": "57ca1c38f7086c7d7e19e511f45b69252c267728",
+      "size": 1965
+    },
+    {
+      "path": "src/domain/organization/PositionModal.jsx",
+      "sha": "38f6d8d128d3e953f479d7654aab1d8d2ae820db",
+      "size": 2792
+    },
+    {
+      "path": "src/domain/organization/PositionTree.jsx",
+      "sha": "abb8d9c3a8ade4ba4e407de74273d81d6e3a9da0",
+      "size": 1099
+    },
+    {
+      "path": "src/domain/organization/ProcessBoard.jsx",
+      "sha": "844c87a5459c16d769fb2e46810e47d80ab3ce4e",
+      "size": 1766
+    },
+    {
+      "path": "src/domain/organization/organizationMaps.js",
+      "sha": "fd3967338045d91888ddb4e642e10560a50733b7",
+      "size": 824
+    },
+    {
+      "path": "src/domain/organization/processBoard.js",
+      "sha": "5c1090148840c917556a462b82bb8d159e5e1350",
+      "size": 304
+    },
+    {
+      "path": "src/domain/processes/ProcessAssignments.jsx",
+      "sha": "4ad89f3dfa0e76cd8892e7059a5e97736c2a648a",
+      "size": 3279
+    },
+    {
+      "path": "src/domain/processes/ProcessDetail.jsx",
+      "sha": "838781a34bdda89e4dbbb3bf50b162fb04e07e22",
+      "size": 3389
+    },
+    {
+      "path": "src/domain/public-site.css",
+      "sha": "b67c610755ddac75665647c00be7dc87c4d2c99b",
+      "size": 11099
+    },
+    {
+      "path": "src/domain/site.js",
+      "sha": "6b620b32e46e193301a3273732290ef379e1ea17",
+      "size": 335
+    },
+    {
+      "path": "src/domain/student/Library.jsx",
+      "sha": "c575fbb8f24a64902a8e6a7f02be7460b9a4116d",
+      "size": 3160
+    },
+    {
+      "path": "src/domain/student/StudentPortal.jsx",
+      "sha": "2b04c1ae13dbc29a9ab5435651a5f83136b17bd4",
+      "size": 11804
+    },
+    {
+      "path": "src/features/account/EmailVerificationForm.jsx",
+      "sha": "172ea0e334b33041bc55bb908d1ccbe5d2269737",
+      "size": 3882
+    },
+    {
+      "path": "src/features/account/LoginPage.jsx",
+      "sha": "cf43cdf1e6c3b494bcc2a879093fd24342bd3794",
+      "size": 2343
+    },
+    {
+      "path": "src/features/admin/Users.jsx",
+      "sha": "06b123e8af275c7bcc147e21d35bb855ac8c7cde",
+      "size": 1833
+    },
+    {
+      "path": "src/hooks/useRemote.js",
+      "sha": "5e4ec18a67d3944f6f48fae9859ce1666ef4a33c",
+      "size": 1466
+    },
+    {
+      "path": "src/hooks/useSession.js",
+      "sha": "f25604f37625a504ec4838fc73791a9fae5ce39f",
+      "size": 1617
+    },
+    {
+      "path": "src/lib/errors.js",
+      "sha": "ae97a54de58b31e6e7fca254948c74feb20cbfe9",
+      "size": 963
+    },
+    {
+      "path": "src/lib/roles.js",
+      "sha": "55dc889c6d52e1bd22ed703770a88392c8a57104",
+      "size": 243
+    },
+    {
+      "path": "src/lib/session.js",
+      "sha": "deb54310d50524c26b51129f0b929245d3e9b068",
+      "size": 653
+    },
+    {
+      "path": "src/main.jsx",
+      "sha": "a7295f121f81b3e9243b83fe16b0937cbf0f4bcf",
+      "size": 224
+    },
+    {
+      "path": "src/services/api.js",
+      "sha": "7362038ce315800e0784fa88c682fc13b1da2409",
+      "size": 3610
+    },
+    {
+      "path": "src/services/auth.service.js",
+      "sha": "df05be0252b5be9c32aef173de2fac29a238cedd",
+      "size": 770
+    },
+    {
+      "path": "src/services/emailVerification.service.js",
+      "sha": "9b1cc250a36dae1535f643ba0be5d82b477d1380",
+      "size": 427
+    },
+    {
+      "path": "src/styles.css",
+      "sha": "300d15c73e461628e68c81b354f7bddaa7a65ae7",
+      "size": 4230
+    },
+    {
+      "path": "tests/admissions.test.jsx",
+      "sha": "35a131e3f8e7aa3ef728a0c62486dfdbfe44c1b3",
+      "size": 5801
+    },
+    {
+      "path": "tests/api.test.js",
+      "sha": "c162dc2cbfa959dae667e935da78c2f2297bef90",
+      "size": 3561
+    },
+    {
+      "path": "tests/archangel-loader.test.jsx",
+      "sha": "7dc887aeee14af50094f41a16f74c82a748decbe",
+      "size": 1949
+    },
+    {
+      "path": "tests/email-verification.test.jsx",
+      "sha": "77813eae268f65d422593fe09bab1f725df91399",
+      "size": 6393
+    },
+    {
+      "path": "tests/icmsa.test.jsx",
+      "sha": "aa3e221e0b1484d608d630a84399adfd85f83ab7",
+      "size": 6848
+    },
+    {
+      "path": "tests/library.test.jsx",
+      "sha": "c4679b1ee63b1a95b8fee7ec3adab4d0ea1e469c",
+      "size": 1340
+    },
+    {
+      "path": "tests/login-routing.test.jsx",
+      "sha": "cea4bc6346a155146dbfaeabf13db2222db0196d",
+      "size": 2726
+    },
+    {
+      "path": "tests/mobile-navigation.test.jsx",
+      "sha": "991308453cae10d730e4876ffd6259c468580443",
+      "size": 3116
+    },
+    {
+      "path": "tests/setup.js",
+      "sha": "020f4e632acb466900a588790e3b539447f0d39b",
+      "size": 473
+    },
+    {
+      "path": "tests/ui.test.jsx",
+      "sha": "2ff7112ef52a2af18736fe5d51dc8e5b76689f0f",
+      "size": 3941
+    },
+    {
+      "path": "vercel.json",
+      "sha": "1263908391c8aaad5325238904ec1c7ec210478b",
+      "size": 724
+    },
+    {
+      "path": "vite.config.js",
+      "sha": "508050c47d2910a95d5063778390474d8e14bc5e",
+      "size": 230
+    }
+  ],
+  "actions": [
+    {
+      "name": "CI",
+      "id": 41470663255,
+      "sha": "909a268c0cf6da17e3d60586d09a8e9a5fdb60e0",
+      "conclusion": "success",
+      "url": "https://github.com/kevin666uwu/icmsa-front/actions/runs/41470663255"
+    },
+    {
+      "name": "CI",
+      "id": 41007504796,
+      "sha": "2ad9f7ff6b8055d800900244fd743d961756873d",
+      "conclusion": "success",
+      "url": "https://github.com/kevin666uwu/icmsa-front/actions/runs/41007504796"
+    },
+    {
+      "name": "CI",
+      "id": 40727114002,
+      "sha": "7dc87ac0dd5962f2e7adac1bd88510a404dca1e3",
+      "conclusion": "success",
+      "url": "https://github.com/kevin666uwu/icmsa-front/actions/runs/40727114002"
+    },
+    {
+      "name": "CI",
+      "id": 40642070386,
+      "sha": "14b0a72a0eb717b6e5a7950d96dbefc134c74651",
+      "conclusion": "success",
+      "url": "https://github.com/kevin666uwu/icmsa-front/actions/runs/40642070386"
+    },
+    {
+      "name": "CI",
+      "id": 40641858052,
+      "sha": "20d7328cdd0eb1846a13db6060ad0e147aa6083d",
+      "conclusion": "success",
+      "url": "https://github.com/kevin666uwu/icmsa-front/actions/runs/40641858052"
+    }
+  ],
+  "runtimeMobile": "NOT_VERIFIED; static styles/tests inventoried",
+  "providerEnvironment": "NOT_VERIFIED"
+}
