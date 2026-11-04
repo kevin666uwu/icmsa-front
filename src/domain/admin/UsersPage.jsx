@@ -82,15 +82,44 @@ function ScopeForm({ data, user, onSaved }) {
     </form>{action.error&&<ErrorState message={action.error}/>}<button className="button primary" disabled={action.busy} onClick={()=>action.run(async()=>{await write('/users/'+user.id+'/scopes',items,'PUT');onSaved();})}>Guardar alcances</button>
   </div>;
 }
+function DeleteUserDialog({ record, onClose, onDone }) {
+  const action=useAction(),[confirmation,setConfirmation]=useState('');
+  const canDelete=confirmation.trim()===record.email;
+  return <Modal title="Eliminar usuario" onClose={onClose}>
+    <div className="user-delete-notice">
+      <p><strong>{record.name}</strong> · {record.email}</p>
+      <p>Solo pueden eliminarse definitivamente cuentas sin expedientes de alumnos, vínculos de personal ni actividad histórica. Los registros institucionales nunca se eliminarán.</p>
+      <p>Si la cuenta tiene historial, usa <strong>Desactivar acceso</strong> para impedir su ingreso y conservar la trazabilidad.</p>
+    </div>
+    <form className="entity-form" onSubmit={e=>{e.preventDefault();if(!canDelete)return;action.run(async()=>{await write('/users/'+record.id,undefined,'DELETE');onDone('Cuenta eliminada definitivamente.');});}}>
+      <label>Escribe el correo del usuario para confirmar<input
+        value={confirmation} onChange={e=>setConfirmation(e.target.value)}
+        autoComplete="off" spellCheck={false} placeholder={record.email}
+        aria-label="Confirmar correo de la cuenta que se eliminará"
+      /></label>
+      {action.error&&<ErrorState message={action.error}/>}
+      <div className="form-actions">
+        <button type="submit" className="user-delete-danger" disabled={action.busy||!canDelete}>Eliminar definitivamente</button>
+        {record.active&&<button type="button" disabled={action.busy} onClick={()=>action.run(async()=>{
+          await write('/users/'+record.id,{active:false},'PATCH');
+          onDone('Cuenta desactivada. El expediente y el historial se conservaron.');
+        })}>Desactivar acceso en su lugar</button>}
+        <button type="button" disabled={action.busy} onClick={onClose}>Cancelar</button>
+      </div>
+    </form>
+  </Modal>;
+}
+
 export default function UsersPage({ user }) {
-  const [offset,setOffset]=useState(0),[edit,setEdit]=useState(undefined),[scope,setScope]=useState(null),[studentProfile,setStudentProfile]=useState(null),[notice,setNotice]=useState('');
+  const [offset,setOffset]=useState(0),[edit,setEdit]=useState(undefined),[scope,setScope]=useState(null),[studentProfile,setStudentProfile]=useState(null),[deleting,setDeleting]=useState(null),[notice,setNotice]=useState('');
   const loader=useCallback(signal=>read('/users?limit=25&offset='+offset,signal),[offset]),remote=useRemote(loader);
   return <section><div className="page-heading"><div><h1>Usuarios</h1><p>Las cuentas de acceso y los empleados son registros independientes.</p></div><button className="button primary" onClick={()=>setEdit(null)}>Crear usuario</button></div>
-    {notice&&<p role="status">{notice}</p>}{remote.loading?<LoadingState/>:remote.error?<ErrorState message={remote.error}/>:<div className="table-scroll"><table className="responsive-table"><caption>Cuentas institucionales</caption><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{remote.data.map(row=><tr key={row.id}><td data-label="Nombre">{row.name}</td><td data-label="Correo">{row.email}</td><td data-label="Rol">{row.role}</td><td data-label="Estado">{row.active?'Activo':'Inactivo'}</td><td data-label="Acciones">{row.id!==user.id&&<><button onClick={()=>setEdit(row)}>Editar</button>{row.role==='student'?<button onClick={()=>setStudentProfile(row)}>Expediente alumno</button>:<button onClick={()=>setScope(row)}>Alcances</button>}</>}</td></tr>)}</tbody></table></div>}
+    {notice&&<p role="status">{notice}</p>}{remote.loading?<LoadingState/>:remote.error?<ErrorState message={remote.error}/>:<div className="table-scroll"><table className="responsive-table"><caption>Cuentas institucionales</caption><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{remote.data.map(row=><tr key={row.id}><td data-label="Nombre">{row.name}</td><td data-label="Correo">{row.email}</td><td data-label="Rol">{row.role}</td><td data-label="Estado">{row.active?'Activo':'Inactivo'}</td><td data-label="Acciones">{row.id!==user.id&&<><button onClick={()=>setEdit(row)}>Editar</button>{row.role==='student'?<button onClick={()=>setStudentProfile(row)}>Expediente alumno</button>:<button onClick={()=>setScope(row)}>Alcances</button>}<button className="user-delete-trigger" onClick={()=>setDeleting(row)} aria-label={'Eliminar usuario '+row.name}>Eliminar</button></>}</td></tr>)}</tbody></table></div>}
     <div className="pagination"><button disabled={!offset} onClick={()=>setOffset(v=>Math.max(0,v-25))}>Anterior</button><button disabled={!remote.data||remote.data.length<25} onClick={()=>setOffset(v=>v+25)}>Siguiente</button></div>
     {edit!==undefined&&<UserEditor record={edit} onClose={()=>setEdit(undefined)} onSaved={saved=>{setEdit(undefined);setNotice('Usuario guardado.');remote.refresh();if(saved?.role==='student')setStudentProfile(saved);}}/>}
     {scope&&<ScopeEditor user={scope} onClose={()=>setScope(null)}/> }
     {studentProfile&&<StudentProfileEditor user={studentProfile} onClose={()=>setStudentProfile(null)} onSaved={()=>{setStudentProfile(null);setNotice('Expediente de alumno vinculado.');remote.refresh();}}/>}
+    {deleting&&<DeleteUserDialog record={deleting} onClose={()=>setDeleting(null)} onDone={message=>{setDeleting(null);setNotice(message);if(remote.data?.length===1&&offset>0)setOffset(offset-25);else remote.refresh();}}/>}
   </section>;
 }
 
