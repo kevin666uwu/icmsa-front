@@ -144,3 +144,11 @@ fieldset{min-width:0}
  .login-form-panel{grid-row:1;grid-column:1;min-height:100svh;align-content:center}
  .login-brand-panel{grid-row:2;grid-column:1}
 }
+
+/* Administración de usuarios: eliminación confirmada y alternativa de desactivación */
+.user-delete-trigger{color:#9b2c2c;border-color:#edcccc;background:#fffafa}
+.user-delete-trigger:hover{background:#fff1f1}
+.user-delete-notice{border:1px solid #e9d3bf;background:#fffaf4;border-radius:12px;padding:12px 16px;line-height:1.6;margin-bottom:16px}
+.user-delete-notice p{margin:.25rem 0 .6rem}
+.user-delete-danger{background:#ad2929;color:#fff;border-color:#ad2929}
+.user-delete-danger:hover:not(:disabled){background:#8a1f1f}
