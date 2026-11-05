@@ -14,7 +14,7 @@ export default function OrganizationPage({ access }) {
     {notice && <p role="status" className="notice">{notice}</p>}
     {remote.loading ? <LoadingState /> : remote.error ? <ErrorState message={remote.error} onRetry={remote.refresh} /> :
       maps.positions.size ? <div className="department-org-chart">
-        {[...maps.departments.values()].filter(d => d.active !== false).sort((a,b)=>(a.sort_order??0)-(b.sort_order??0)||a.name.localeCompare(b.name,'es')).map(department => {
+        {[...maps.departments.values()].sort((a,b)=>(a.sort_order??0)-(b.sort_order??0)||a.name.localeCompare(b.name,'es')).map(department => {
           const roots = maps.roots.get(department.id) || [];
           const processRows = maps.processes.filter(p => p.department_id === department.id && p.status !== 'inactive');
           return <section key={department.id} className="department-org-unit" aria-label={'Departamento: '+department.name}>
