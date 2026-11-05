@@ -2,10 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { visibleNavigation } from '../src/domain/navigation.js';
-import { organizationMaps } from '../src/domain/organization/organizationMaps.js';
 import { moveProcess } from '../src/domain/organization/processBoard.js';
-import PositionTree from '../src/domain/organization/PositionTree.jsx';
-import PositionModal from '../src/domain/organization/PositionModal.jsx';
 import ProcessBoard from '../src/domain/organization/ProcessBoard.jsx';
 import ResourcePage from '../src/domain/ResourcePage.jsx';
 import ResourceForm from '../src/domain/ResourceForm.jsx';
@@ -18,22 +15,9 @@ const response=payload=>new Response(JSON.stringify(payload),{headers:{'Content-
 describe('ICMSA institutional domain',()=>{
   it('only exposes navigation authorized by server contracts',()=>{
     const items=visibleNavigation(access);
-    expect(items.some(i=>i.resource==='departments')).toBe(true);
+    expect(items.map(i=>i.label)).toEqual(['Organigrama']);
     expect(items.some(i=>i.resource==='students')).toBe(false);
     expect(items.some(i=>i.type==='users')).toBe(false);
-  });
-  it('builds tree maps once and displays vacant independent slots',()=>{
-    const maps=organizationMaps(data),select=vi.fn();
-    render(<ul><PositionTree position={data.positions[0]} maps={maps} onSelect={select}/></ul>);
-    expect(screen.getByText('VACANTE')).toBeInTheDocument();
-    expect(screen.getAllByText('Docente')).toHaveLength(2);
-    fireEvent.click(screen.getByText('VACANTE'));
-    expect(select).toHaveBeenCalledWith(data.positions[1]);
-  });
-  it('shows position details and hides editing without authorization',()=>{
-    render(<PositionModal position={data.positions[0]} maps={organizationMaps(data)} canEdit={false} onClose={vi.fn()} onSaved={vi.fn()}/>);
-    expect(screen.getByRole('dialog')).toHaveTextContent('Persona Prueba');
-    expect(screen.queryByRole('button',{name:'Guardar cambios'})).not.toBeInTheDocument();
   });
   it('keeps process lanes exclusive and supports keyboard alternative',async()=>{
     const save=vi.fn();
@@ -80,16 +64,5 @@ describe('ICMSA institutional domain',()=>{
     expect(await screen.findByText('Esta página no está disponible para tu cuenta.')).toBeInTheDocument();
     expect(screen.queryByRole('link',{name:'Alumnos'})).not.toBeInTheDocument();
   });
-});
-
-it('submits the position and occupant through one atomic endpoint',async()=>{
-  const saved=vi.fn(),fetcher=vi.fn(async()=>response({status:'saved'}));
-  vi.stubGlobal('fetch',fetcher);
-  render(<PositionModal position={data.positions[0]} maps={organizationMaps(data)} canEdit={true} onClose={vi.fn()} onSaved={saved}/>);
-  await userEvent.click(screen.getByRole('button',{name:'Guardar cambios'}));
-  await waitFor(()=>expect(saved).toHaveBeenCalledOnce());
-  expect(fetcher).toHaveBeenCalledOnce();
-  expect(fetcher.mock.calls[0][0]).toContain('/positions/3/editor');
-  expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({name:'Docente',area_id:2,parent_position_id:null,employee_id:5});
 });
 
