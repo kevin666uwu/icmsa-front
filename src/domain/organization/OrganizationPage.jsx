@@ -5,6 +5,7 @@ import { read, write, displayName } from '../api.js';
 import PositionTree from './PositionTree.jsx';
 import PositionModal from './PositionModal.jsx';
 import { organizationMaps } from './organizationMaps.js';
+import OrgDirectory from './OrgDirectory.jsx';
 
 const loadOrganization=signal=>read('/organization',signal);
 const initialStaff={first_name:'',last_name:'',employee_number:''};
@@ -64,7 +65,7 @@ export default function OrganizationPage({ access }) {
   return <div className="organization-page icmsa-kpis-org">
     <header className="knowledge-hero">
       <span className="eyebrow">GOBIERNO DE PROCESOS</span>
-      <h1>Organización</h1>
+      <h1>Organigrama</h1>
       <p>{canManage
         ? 'Administra puestos, personal y áreas funcionales. El organigrama indica quién reporta a quién; los procesos se asignan independientemente a las personas.'
         : 'Consulta el organigrama institucional y los procesos relacionados con cada puesto.'}</p>
@@ -146,6 +147,9 @@ export default function OrganizationPage({ access }) {
             <div className="empty-card">Todavía no existen puestos raíz. Crea tu primer puesto directamente en un departamento.</div>}
         </div>
       </section>
+
+      <OrgDirectory maps={maps} access={access} onSaved={didSave}
+        onPositionSelect={position=>setSelected({position,showProcesses:false})}/>
 
       {selected && <PositionModal key={selected.position.id} position={selected.position} maps={maps}
         canEdit={canEditPosts} canEditProcesses={canAssignProcesses}
