@@ -81,7 +81,7 @@ export default function PositionModal({ position, maps, canEdit, canEditProcesse
         </select></label>
         <label>Reporta a<select value={parent} onChange={e=>setParent(e.target.value)}>
           <option value="">Nivel superior / raíz</option>
-          {[...maps.positions.values()].filter(p=>p.id!==position.id&&maps.positionDepartment(p)===Number(department)).map(p=><option key={p.id} value={p.id}>{p.name} · {maps.occupants.get(p.id)?displayName(maps.occupants.get(p.id)):'Vacante'}</option>)}
+          {[...maps.positions.values()].filter(p=>p.id!==position.id).map(p=><option key={p.id} value={p.id}>{p.name} · {maps.occupants.get(p.id)?displayName(maps.occupants.get(p.id)):'Vacante'}</option>)}
         </select></label>
         <label>Ocupante<select value={employee} onChange={e=>setEmployee(e.target.value)}>
           <option value="">Vacante</option>
