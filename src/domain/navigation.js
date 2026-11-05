@@ -14,6 +14,10 @@ export const studentNavigation = [
 export const navigation = [
   { path: '/portal/personal', label: 'Personal', group: 'Administración', permission: 'employees.read', type: 'personnel' },
   { path: '/portal/organigrama', label: 'Organigrama', group: 'Administración', permission: 'organization.read', type: 'organization' },
+  { path: '/portal/operacion/admision', label: 'Admisión', group: 'Operación', permission: 'admissions.read', type: 'admissions' },
+  { path: '/portal/operacion/servicio-social', label: 'Servicio social y prácticas profesionales', group: 'Operación', permission: 'student_services.read', type: 'placements' },
+  { path: '/portal/operacion/alumnado', label: 'Alumnado', group: 'Operación', permission: 'students.read', type: 'students' },
+  { path: '/portal/operacion/finanzas', label: 'Finanzas', group: 'Operación', permission: 'finance.read', type: 'finance' },
 ];
 
 export const hiddenNavigation = [

@@ -380,6 +380,9 @@ fieldset{min-width:0}
 }
 
 .personnel-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px}
+.operations-finance-summary .metric strong{font-size:clamp(1.2rem,2.1vw,1.8rem);overflow-wrap:anywhere}
+.operations-payment-form{margin-top:24px}
+.operations-page .row-actions{flex-wrap:wrap}
 .personnel-tabs button{padding:10px 18px;border:1px solid #d9e0ea;border-radius:10px;background:#fff;color:#293568;font-weight:700;cursor:pointer}
 .personnel-tabs button[aria-selected=true]{background:#293568;color:#fff}
 .org-staff-list{max-height:340px;overflow:auto;display:grid;gap:14px}

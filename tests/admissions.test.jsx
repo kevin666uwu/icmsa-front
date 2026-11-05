@@ -59,7 +59,7 @@ it('lists admissions in the dedicated department and saves a review',async()=>{
  await waitFor(()=>expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
  expect(fetcher.mock.calls.some(([,options])=>options?.method==='PATCH'&&JSON.parse(options.body).status==='in_review')).toBe(true);
  const allowed=visibleNavigation({role:'super_admin',permissions:['admissions.read'],resources:{}});
- expect(allowed.find(x=>x.type==='admissions')).toBeUndefined();
+ expect(allowed.find(x=>x.type==='admissions')?.group).toBe('Operación');
  expect(hiddenRoute('/admin/admision',{role:'super_admin',permissions:['admissions.read'],resources:{}})?.group).toBe('Admisión');
  expect(visibleNavigation({role:'employee',permissions:[],resources:{}}).some(x=>x.type==='admissions')).toBe(false);
 });

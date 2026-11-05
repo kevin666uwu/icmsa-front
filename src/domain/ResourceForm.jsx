@@ -44,7 +44,7 @@ export default function ResourceForm({ spec, access, record, onClose, onSaved })
             if (key === 'parent_position_id') options = options.filter(row => !record || row.id !== record.id);
             input = <select {...props}><option value="">{key === 'area_id' && ['positions','processes'].some(p=>spec.path.endsWith(p)) ? 'Sin área — depende del departamento' : 'Seleccionar…'}</option>{options.map(row => <option key={row.id} value={row.id}>{displayName(row)} · #{row.id}</option>)}</select>;
           } else input = <input {...props} type={['integer', 'reference', 'decimal'].includes(field.type) ? 'number' : field.type === 'datetime' ? 'datetime-local' : field.type === 'email' ? 'email' : field.type === 'date' ? 'date' : 'text'}
-            step={field.type === 'decimal' ? '0.0001' : undefined} min={['integer', 'reference'].includes(field.type) ? (field.type === 'reference' ? 1 : 0) : undefined} maxLength={field.max_length || 255} />;
+            step={field.step ?? (field.type === 'decimal' ? '0.0001' : undefined)} min={field.min ?? (['integer', 'reference'].includes(field.type) ? (field.type === 'reference' ? 1 : 0) : undefined)} maxLength={field.max_length || 255} />;
           return <label key={key} htmlFor={props.id}><span>{field.label}{field.required && <span aria-hidden="true"> *</span>}</span>{input}</label>;
         })}
         {action.error && <ErrorState message={action.error} />}
