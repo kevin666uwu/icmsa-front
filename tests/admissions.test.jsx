@@ -5,7 +5,7 @@ import AdmissionForm from '../src/domain/admissions/AdmissionForm.jsx';
 import AdmissionsPage from '../src/domain/admissions/AdmissionsPage.jsx';
 import PublicSite from '../src/domain/PublicSite.jsx';
 import { curpError } from '../src/domain/admissions/curp.js';
-import { visibleNavigation } from '../src/domain/navigation.js';
+import { visibleNavigation, hiddenRoute } from '../src/domain/navigation.js';
 afterEach(()=>vi.unstubAllGlobals());
 const response=data=>new Response(JSON.stringify(data),{headers:{'Content-Type':'application/json'}});
 async function fill(){
@@ -59,6 +59,7 @@ it('lists admissions in the dedicated department and saves a review',async()=>{
  await waitFor(()=>expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
  expect(fetcher.mock.calls.some(([,options])=>options?.method==='PATCH'&&JSON.parse(options.body).status==='in_review')).toBe(true);
  const allowed=visibleNavigation({role:'super_admin',permissions:['admissions.read'],resources:{}});
- expect(allowed.find(x=>x.type==='admissions').group).toBe('Admisión');
+ expect(allowed.find(x=>x.type==='admissions')).toBeUndefined();
+ expect(hiddenRoute('/admin/admision',{role:'super_admin',permissions:['admissions.read'],resources:{}})?.group).toBe('Admisión');
  expect(visibleNavigation({role:'employee',permissions:[],resources:{}}).some(x=>x.type==='admissions')).toBe(false);
 });
