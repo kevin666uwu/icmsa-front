@@ -18,42 +18,35 @@ and security headers. Configure the backend exact CORS origin before use.
 No hosting project or production deployment has been created by this implementation.
 
 
-## Organigrama de KPIs Web (noviembre de 2026)
-La pantalla de Organización de ICMSA comparte el diseño visual de `Kevins4l/KPIS_FRONT/src/components/OrganizationPage.jsx`: formularios compactos de administración, árbol de puestos con tarjetas y conectores, contadores de procesos, edición contextual mediante modal y tablero de asignación de procesos en tres columnas con arrastrar y soltar (más selector accesible).
+## Organigrama: réplica de KPIs Web (esquema 0.5)
 
-### Diferencias necesarias por el dominio escolar
-- Las personas del organigrama se toman de `employees`, no de las cuentas de acceso `users`; sus credenciales se administran por separado.
-- Cada puesto se adscribirá a un departamento, con área funcional opcional. Las relaciones de reporte pueden conectar distintos departamentos (por ejemplo Dirección → jefaturas).
-- Las asignaciones y su historial se gestionan mediante la API existente de ICMSA: `/employees/{id}/position`, `/positions/{id}/editor` y `/employees/{id}/processes`.
-- El tablero muestra los procesos heredados y guarda únicamente las asignaciones directas del empleado, sin convertir permisos heredados en permisos directos.
-- Los formularios respetan el acceso institucional. Solo `super_admin` puede crear personal sin plaza desde esta pantalla.
-- La vista requiere un backend actualizado con la migración departamental 0.4 aplicada. Despliegue frontend exitoso no garantiza que el backend esté migrado.
+La vista activa `/portal/organigrama` reutiliza directamente el componente
+`Kevins4l/KPIS_FRONT/src/components/OrganizationPage.jsx`, adaptado al backend de ICMSA.
+La pantalla tiene **solo cuatro formularios**:
+- Agregar usuario: nombre, correo, contraseña temporal (mínimo 12 caracteres), rol miembro/administrador.
+- Agregar área: nombre y área superior opcional.
+- Agregar puesto: área, nombre de puesto y puesto superior.
+- Asignar persona: usuario y puesto.
 
-### Revisión
-Validar jerarquía de departamentos, expansión de tarjetas, edición de puestos, proceso en las tres columnas, permisos restringidos y visualización móvil.
+Debajo se despliega un organigrama de tarjetas y conectores. Cada tarjeta permite
+cambiar puesto, área, superior y ocupante; ver procesos responsables/relacionados;
+y editar asignaciones en tres columnas por arrastrar/soltar. Ya **no existe**
+administración de departamentos en esta pantalla ni componentes anteriores
+`OrgDirectory`, `DepartmentManager`, `PositionTree` o `PositionModal`.
 
+La API del área está en `/api/v1/organization/kpis` y los comandos correspondientes
+`/api/v1/organization/{units,positions,users}`. Los usuarios creados en este
+flujo tienen cuenta real de acceso y expediente de personal vinculado. El rol
+"Administrador" equivale a superadministrador y por ello solo puede emitirlo
+un superadministrador; no debe utilizarse para usuarios comunes.
 
-## Navegación simplificada de Organización (noviembre de 2026)
+### Compatibilidad y activación
+ICMSA conserva `departments.id` únicamente como compatibilidad interna de
+módulos escolares anteriores, **nunca como un campo visible o requerido en el
+organigrama**. Las áreas disponen de `parent_area_id` (migración de esquema 0.5).
+Los registros antiguos y el historial no se borran automáticamente.
 
-El menú interno muestra únicamente **Organización → Organigrama** y mantiene **Operación → Procesos** como módulo separado. Se eliminaron los accesos laterales redundantes de Personal, Departamentos, Áreas y Puestos, sin eliminar sus tablas ni endpoints. En la misma página de Organigrama existe una sección desplegable **Gestionar estructura y vacantes**, con catálogos y edición de departamentos, áreas, personal, puestos, plazas vacantes y puestos inactivos. Los formularios de alta y asignación de KPIs Web permanecen en la vista de Organigrama.
-
-Servicios Escolares y Servicios Estudiantiles son departamentos institucionales, por lo que se retiraron del menú administrativo como entradas independientes. Sus registros de trámites/casos no se borraron; los enlaces anteriores a esas páginas siguen siendo compatibles si un usuario tiene autorización. El portal del alumno mantiene los accesos a trámites, documentos y saldos.
-
-Los enlaces guardados a rutas de organización antiguas abren ahora Organigrama. Indicadores, asistencia, academia, admisión, biblioteca y administración conservan sus entradas y permisos independientes.
-
-**No se modificó el esquema de base de datos para esta simplificación de navegación.** Sigue siendo necesario desplegar y migrar el backend 0.4 para utilizar puestos sin área. No confundir un despliegue correcto de Vercel con pruebas completas de API/BD.
-
-
-## Modo de reinicio visual: solo Organigrama en el menú (noviembre 2026)
-
-A petición del responsable del proyecto, el **menú administrativo** muestra únicamente `Organigrama` en `/portal/organigrama`. El acceso por defecto `/portal` redirige allí cuando la cuenta tiene permiso `organization.read`. Si la cuenta no cuenta con dicho permiso, su ruta inicial original sigue disponible para no bloquear el acceso.
-
-Todos los demás módulos permanecen implementados, pero sus entradas laterales están temporalmente ocultas. Sus rutas protegidas siguen resolviéndose si el usuario cuenta con la autorización correspondiente; no se modificaron tablas ni se borraron expedientes. El menú del alumnado no cambió.
-
-La definición del menú visible está en `src/domain/navigation.js`; las rutas antiguas están en `hiddenNavigation`. Para reintroducir funciones más adelante, mover las entradas autorizadas del catálogo oculto al visible, sin reimplementar pantallas ni endpoints.
-
-## Gestión visible de departamentos en Organigrama
-
-En `/portal/organigrama` se muestra en primer plano la sección **Departamentos**, sin desplegables ocultos y sin agregar una nueva entrada al menú. Cada departamento muestra su nombre, estado y conteos de áreas, puestos y procesos visibles. Para `super_admin` ofrece **Agregar departamento**, **Editar** y **Eliminar** usando los campos del catálogo institucional. El resto de catálogos permanece dentro del desplegable de gestión organizacional. Al guardar se actualiza el organigrama.
-
-La eliminación exige escribir el nombre exacto del departamento. Si existen registros asociados, la API devuelve conflicto (409) y mantiene el departamento; la interfaz ofrece **Desactivar en su lugar**. Esto evita que una simplificación del menú borre información de la escuela.
+El menú administrativo solo ofrece Organigrama. Los demás módulos permanecen
+en rutas protegidas y pueden recuperarse sin perder datos; el portal del alumno
+no cambia. Requiere frontend y backend actualizados y la migración 0.5 aplicada.
+El CI ejecuta pruebas de interfaz, permisos y creación de áreas sin departamentos.
