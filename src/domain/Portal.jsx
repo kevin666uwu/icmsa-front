@@ -15,6 +15,16 @@ import StudentPortal from './student/StudentPortal.jsx';
 import { Modal } from '../components/ui/Modal.jsx';
 import { SAN_ANGELO_LOGO } from './brand.js';
 const load=signal=>read('/access',signal);
+const oldOrganizationRoutes=new Set([
+  '/portal/personal',
+  '/portal/organizacion/departamentos',
+  '/portal/organizacion/areas',
+  '/portal/organizacion/puestos',
+]);
+const legacyServiceResources={
+  '/portal/servicios-escolares':'school_service_requests',
+  '/portal/servicios-estudiantiles':'student_service_cases',
+};
 export default function Portal({ path, session }) {
   const remote=useRemote(load),[menu,setMenu]=useState(false);
   useEffect(()=>{
@@ -28,7 +38,12 @@ export default function Portal({ path, session }) {
     const selectedStudent=studentNavigation.find(item=>item.path===path)||studentNavigation[0];
     return <StudentPortal view={selectedStudent.view} user={session.user} path={path} session={session}/>;
   }
-  const items=visibleNavigation(access),selected=items.find(i=>i.path===path||(path==='/admin'&&i.type==='users'));
+  const items=visibleNavigation(access);
+  const effectivePath=oldOrganizationRoutes.has(path)?'/portal/organigrama':path;
+  const legacyResource=legacyServiceResources[path];
+  // Existing bookmarks still work without duplicating navigation entries.
+  const selected=items.find(i=>i.path===effectivePath||(effectivePath==='/admin'&&i.type==='users'))
+    || (legacyResource && access.resources[legacyResource] ? {resource:legacyResource}:undefined);
   const groups=[...new Set(items.map(i=>i.group))];
   const links=groups.map(group=><section key={group}><h2>{group}</h2>{items.filter(i=>i.group===group).map(item=><a key={item.path} href={item.path} aria-current={selected===item?'page':undefined} onClick={event=>{if(event.metaKey||event.ctrlKey||event.shiftKey)return;event.preventDefault();navigate(item.path);setMenu(false);}}>{item.label}</a>)}</section>);
   let content=<ErrorState message="Esta página no está disponible para tu cuenta."/>;
