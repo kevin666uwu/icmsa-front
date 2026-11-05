@@ -1,35 +1,45 @@
 import { describe, expect, it } from 'vitest';
-import { navigation, studentNavigation, visibleNavigation } from './navigation.js';
+import { navigation, hiddenNavigation, hiddenRoute, studentNavigation, visibleNavigation } from './navigation.js';
 
-describe('navegación institucional simplificada', () => {
-  it('muestra solamente Organigrama bajo Organización', () => {
-    const organization = navigation.filter(item => item.group === 'Organización');
-    expect(organization.map(item => item.label)).toEqual(['Organigrama']);
-    expect(organization[0].path).toBe('/portal/organigrama');
-  });
-
-  it('mantiene Procesos como módulo independiente', () => {
-    const processes = navigation.find(item => item.path === '/portal/procesos');
-    expect(processes).toMatchObject({ label: 'Procesos', group: 'Operación', resource: 'processes' });
-  });
-
-  it('no muestra Servicios Escolares ni Servicios Estudiantiles en el menú administrativo', () => {
-    expect(navigation.some(item => item.path === '/portal/servicios-escolares')).toBe(false);
-    expect(navigation.some(item => item.path === '/portal/servicios-estudiantiles')).toBe(false);
-    expect(navigation.some(item => item.group === 'Servicios')).toBe(false);
-  });
-
-  it('conserva el portal del alumno y las capacidades de la institución', () => {
-    expect(studentNavigation.some(item => item.path === '/portal/tramites')).toBe(true);
-    expect(studentNavigation.some(item => item.path === '/portal/documentos')).toBe(true);
-    expect(navigation.some(item => item.resource === 'students')).toBe(true);
+describe('reinicio de navegación administrativa ICMSA', () => {
+  it('muestra exclusivamente Organigrama en el menú administrativo', () => {
+    expect(navigation).toHaveLength(1);
+    expect(navigation[0]).toMatchObject({
+      path: '/portal/organigrama',
+      label: 'Organigrama',
+      group: 'Organización',
+      permission: 'organization.read',
+      type: 'organization',
+    });
     const access = {
       role: 'super_admin',
-      permissions: ['organization.read'],
-      resources: Object.fromEntries(navigation.filter(x => x.resource).map(x => [x.resource, {path:'/' + x.resource}]))
+      permissions: ['organization.read', 'organization.write', 'users.read'],
+      resources: { processes: { path: '/processes' }, students: { path: '/students' } },
     };
-    const visible = visibleNavigation(access);
-    expect(visible.filter(item => item.group === 'Organización')).toHaveLength(1);
-    expect(visible.find(item => item.path === '/portal/procesos')).toBeDefined();
+    expect(visibleNavigation(access).map(item=>item.label)).toEqual(['Organigrama']);
+    expect(visibleNavigation({ ...access, permissions: [] })).toEqual([]);
+  });
+
+  it('conserva las rutas restantes sin mostrarlas en el menú', () => {
+    expect(hiddenNavigation.some(item=>item.path==='/portal/procesos')).toBe(true);
+    expect(hiddenNavigation.some(item=>item.path==='/admin/usuarios')).toBe(true);
+    expect(hiddenNavigation.some(item=>item.path==='/portal/alumnos')).toBe(true);
+    const access = {
+      role: 'super_admin',
+      permissions: ['users.read', 'organization.read'],
+      resources: { processes: { path: '/processes' } },
+    };
+    expect(hiddenRoute('/portal/procesos', access)?.resource).toBe('processes');
+    expect(hiddenRoute('/admin/usuarios', access)?.type).toBe('users');
+    expect(hiddenRoute('/portal/alumnos', access)).toBeNull();
+    expect(hiddenRoute('/admin/documentos', access)).toBeNull();
+    expect(hiddenRoute('/portal/organigrama', access)).toBeNull();
+  });
+
+  it('no altera las opciones del portal estudiantil', () => {
+    expect(studentNavigation.some(item=>item.path==='/portal')).toBe(true);
+    expect(studentNavigation.some(item=>item.path==='/portal/tramites')).toBe(true);
+    expect(studentNavigation.some(item=>item.path==='/portal/documentos')).toBe(true);
+    expect(visibleNavigation({ role: 'student' })).toEqual(studentNavigation);
   });
 });
