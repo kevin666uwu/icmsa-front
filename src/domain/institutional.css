@@ -257,7 +257,12 @@ fieldset{min-width:0}
 .org-existing-units>div{display:flex;flex-wrap:wrap;gap:6px;max-height:76px;overflow:auto}
 .org-existing-units span{display:inline-flex;align-items:center;min-height:28px;padding:5px 9px;border-radius:999px;background:#f1f4f9;color:#465166;font-size:10px;font-weight:800;border:1px solid #e2e8f0}
 .org-existing-units em{font-size:11px;color:#94a3b8;font-style:normal}
-.org-existing-units .org-unit-edit{width:auto;min-height:28px;margin-left:8px;padding:3px 7px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;color:#293568;font-size:11px;font-weight:700;cursor:pointer}
+.org-unit-manager{display:grid;gap:10px}
+.org-unit-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid #e2e8f0;border-radius:10px}
+.org-unit-row strong{display:block;overflow-wrap:anywhere}.org-unit-row small{display:block;color:#64748b;font-size:12px}
+.org-unit-row .row-actions{flex-shrink:0}.org-unit-row button{min-height:36px}
+.org-unit-editor{margin-top:20px;padding-top:20px;border-top:1px solid #e2e8f0}
+@media(max-width:480px){.org-unit-row{align-items:flex-start;flex-direction:column}}
 
 /* Per-person process editing control in organization cards. */
 .org-node-card{padding:0;overflow:hidden}

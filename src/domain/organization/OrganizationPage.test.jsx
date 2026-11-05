@@ -64,8 +64,9 @@ describe('Organigrama ICMSA — réplica KPIs Web', () => {
       .mockRejectedValueOnce(new Error('No se pudo guardar'))
       .mockResolvedValueOnce({}).mockResolvedValue(updated);
     render(<OrganizationPage access={{role:'super_admin'}} />);
-    fireEvent.click(await screen.findByRole('button',{name:'Editar área Control Escolar'}));
-    const modal = screen.getByRole('dialog',{name:'Editar área'});
+    fireEvent.click(await screen.findByRole('button',{name:'Gestionar áreas'}));
+    const modal = screen.getByRole('dialog',{name:'Gestionar áreas'});
+    fireEvent.click(within(modal).getByRole('button',{name:'Editar área Control Escolar'}));
     expect(within(modal).getByLabelText('Nombre del área')).toHaveValue('Control Escolar');
     const parent = within(modal).getByLabelText('Área superior');
     expect(within(parent).queryByRole('option',{name:'Control Escolar'})).toBeNull();
@@ -80,7 +81,23 @@ describe('Organigrama ICMSA — réplica KPIs Web', () => {
       method:'PATCH',body:JSON.stringify({name:'Control Académico',parent_area_id:13})
     }));
     expect(await screen.findByRole('button',{name:'Editar área Control Académico'})).toBeTruthy();
-    expect(screen.queryByRole('dialog',{name:'Editar área'})).toBeNull();
+    expect(screen.getByRole('dialog',{name:'Gestionar áreas'})).toBeTruthy();
+    expect(screen.queryByLabelText('Nombre del área')).toBeNull();
+  });
+  it('centraliza acciones y confirma la eliminación sin cerrar la ventana de áreas', async () => {
+    apiFetch.mockResolvedValueOnce(originalData).mockResolvedValueOnce(null)
+      .mockResolvedValue({...originalData,units:[],positions:[]});
+    render(<OrganizationPage access={{role:'super_admin'}} />);
+    const manage = await screen.findByRole('button',{name:'Gestionar áreas'});
+    expect(screen.queryByRole('button',{name:'Editar área Control Escolar'})).toBeNull();
+    fireEvent.click(manage);
+    const modal=screen.getByRole('dialog',{name:'Gestionar áreas'});
+    fireEvent.click(within(modal).getByRole('button',{name:'Eliminar área Control Escolar'}));
+    expect(apiFetch).not.toHaveBeenCalledWith('/api/v1/areas/11',{method:'DELETE'});
+    fireEvent.click(within(modal).getByRole('button',{name:'Confirmar eliminación'}));
+    await waitFor(()=>expect(apiFetch).toHaveBeenCalledWith('/api/v1/areas/11',{method:'DELETE'}));
+    const refreshed = await screen.findByRole('dialog',{name:'Gestionar áreas'});
+    expect(within(refreshed).getByText('No hay áreas registradas.')).toBeTruthy();
   });
   it('mueve a la persona de pendiente a su área después de asignarla', async () => {
     const assigned = { ...originalData, memberships: [{user_id:2,position_id:9}] };

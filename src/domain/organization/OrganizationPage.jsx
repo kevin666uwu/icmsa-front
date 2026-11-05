@@ -14,6 +14,8 @@ export default function OrganizationPage({ access }) {
   const [unitName, setUnitName] = useState("");
   const [parentId, setParentId] = useState("");
   const [editingUnit, setEditingUnit] = useState(null);
+  const [managingUnits, setManagingUnits] = useState(false);
+  const [deletingUnit, setDeletingUnit] = useState(null);
   const [unitError, setUnitError] = useState("");
   const [savingUnit, setSavingUnit] = useState(false);
   const [positionName, setPositionName] = useState("");
@@ -106,8 +108,24 @@ export default function OrganizationPage({ access }) {
   }
 
   function openUnitEditor(unit) {
+    setDeletingUnit(null);
     setEditingUnit({ ...unit, parent_id: unit.parent_id ? String(unit.parent_id) : "" });
     setUnitError("");
+  }
+
+  async function deleteUnit() {
+    if (savingUnit) return;
+    setSavingUnit(true); setUnitError("");
+    try {
+      await apiFetch("/api/v1/areas/" + deletingUnit.id, { method: "DELETE" });
+      setDeletingUnit(null); setEditingUnit(null); setNotice("Área eliminada."); await load();
+    } catch (e) { setUnitError(e.message || "No fue posible eliminar el área."); }
+    finally { setSavingUnit(false); }
+  }
+
+  function closeUnitManager() {
+    if (savingUnit) return;
+    setManagingUnits(false); setEditingUnit(null); setDeletingUnit(null); setUnitError("");
   }
 
   function canBeUnitParent(unit) {
@@ -316,9 +334,10 @@ export default function OrganizationPage({ access }) {
         <div className="org-existing-units">
           <small>Áreas existentes</small>
           <div>{(data.units || []).filter(item => item.active).length
-            ? (data.units || []).filter(item => item.active).map(item => <span key={item.id}>{item.name}<button type="button" className="org-unit-edit" aria-label={"Editar área " + item.name} onClick={() => openUnitEditor(item)}>Editar</button></span>)
+            ? (data.units || []).filter(item => item.active).map(item => <span key={item.id}>{item.name}</span>)
             : <em>Aún no hay áreas creadas.</em>}</div>
         </div>
+        <button type="button" className="button secondary" onClick={() => { setManagingUnits(true); setUnitError(""); }}>Gestionar áreas</button>
         <button className="button">Crear área</button>
       </form>
 
@@ -354,16 +373,27 @@ export default function OrganizationPage({ access }) {
       </div>
     </section>
 
-    {editingUnit && <Modal title="Editar área" className="resource-dialog" onClose={() => { if (!savingUnit) setEditingUnit(null); }}>
-      <form className="entity-form" onSubmit={saveUnit}>
+    {managingUnits && <Modal title="Gestionar áreas" className="resource-dialog" onClose={closeUnitManager}>
+      <div className="org-unit-manager">
+        {(data.units || []).length ? (data.units || []).map(unit => <div className="org-unit-row" key={unit.id}>
+          <div><strong>{unit.name}</strong><small>{unitById.get(unit.parent_id)?.name || "Sin área superior"}{!unit.active ? " · Inactiva" : ""}</small></div>
+          <div className="row-actions"><button type="button" disabled={savingUnit} aria-label={"Editar área " + unit.name} onClick={() => openUnitEditor(unit)}>Editar</button>
+            <button type="button" disabled={savingUnit} aria-label={"Eliminar área " + unit.name} onClick={() => { setEditingUnit(null); setDeletingUnit(unit); setUnitError(""); }}>Eliminar</button></div>
+        </div>) : <p>No hay áreas registradas.</p>}
+      </div>
+      {editingUnit && <form className="entity-form org-unit-editor" onSubmit={saveUnit}>
         <label><span>Nombre del área</span><input autoFocus required maxLength={255} value={editingUnit.name} disabled={savingUnit} onChange={e => setEditingUnit(unit => ({ ...unit, name: e.target.value }))} /></label>
         <label><span>Área superior</span><select value={editingUnit.parent_id} disabled={savingUnit} onChange={e => setEditingUnit(unit => ({ ...unit, parent_id: e.target.value }))}>
           <option value="">Sin área superior</option>
           {(data.units || []).filter(canBeUnitParent).map(unit => <option key={unit.id} value={unit.id}>{unit.name}</option>)}
         </select></label>
-        {unitError && <p className="error" role="alert">{unitError}</p>}
         <div className="form-actions"><button type="submit" className="button primary" disabled={savingUnit}>{savingUnit ? "Guardando…" : "Guardar cambios"}</button><button type="button" className="button secondary" disabled={savingUnit} onClick={() => setEditingUnit(null)}>Cancelar</button></div>
-      </form>
+      </form>}
+      {deletingUnit && <section className="org-unit-editor" aria-label="Confirmar eliminación de área">
+        <p>¿Eliminar el área <strong>{deletingUnit.name}</strong>? Esta acción es permanente. Si tiene puestos, subáreas u otros registros vinculados, primero tendrás que reasignarlos.</p>
+        <div className="form-actions"><button type="button" className="button primary" disabled={savingUnit} onClick={deleteUnit}>{savingUnit ? "Eliminando…" : "Confirmar eliminación"}</button><button type="button" className="button secondary" disabled={savingUnit} onClick={() => { setDeletingUnit(null); setUnitError(""); }}>Cancelar</button></div>
+      </section>}
+      {unitError && <p className="error" role="alert">{unitError}</p>}
     </Modal>}
 
     {openPosition && <div className="org-modal-backdrop" role="presentation" onMouseDown={() => setOpenPosition(null)}>
