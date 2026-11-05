@@ -1,4 +1,4 @@
-import { operationModules } from './operations/modules.js';
+import { operationModules, operationReports } from './operations/modules.js';
 
 export const studentNavigation = [
   { path: '/portal', label: 'Inicio', group: 'Mi aula', type: 'student', view: 'overview' },
@@ -18,6 +18,7 @@ export const navigation = [
   { path: '/portal/organigrama', label: 'Organigrama', group: 'Administración', permission: 'organization.read', type: 'organization' },
   { path: '/portal/operacion/procesos', label: 'Procesos', group: 'Operación', permission: 'processes.read', type: 'processes' },
   { path: '/portal/operacion/modulos', label: 'Módulos', group: 'Operación', anyPermissions: operationModules.map(module=>module.permission), type: 'modules' },
+  ...operationReports.map(report=>({...report,group:'Operación'})),
 ];
 
 export const hiddenNavigation = [

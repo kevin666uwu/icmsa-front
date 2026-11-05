@@ -30,7 +30,7 @@ export function RetentionPage() {
   const remote=useRemote(loader),data=remote.data;
   function field(key,value){setDraft(previous=>({...previous,[key]:value}));}
   return <section className="operations-page school-reports">
-    <div className="page-heading"><div><p className="eyebrow">Operación · Módulos</p><h1>Retención</h1><p>Mide la continuidad del alumnado y detecta señales para dar seguimiento oportuno.</p></div></div>
+    <div className="page-heading"><div><p className="eyebrow">Operación</p><h1>Retención</h1><p>Mide la continuidad del alumnado y detecta señales para dar seguimiento oportuno.</p></div></div>
     <form className="toolbar school-report-filters" onSubmit={event=>{event.preventDefault();setOffset(0);setFilters({...draft});}}>
       <label>Desde<input required type="date" value={draft.start_date} max={draft.end_date} onChange={event=>field('start_date',event.target.value)}/></label>
       <label>Hasta<input required type="date" value={draft.end_date} min={draft.start_date} max={dateNow()} onChange={event=>field('end_date',event.target.value)}/></label>
@@ -66,7 +66,7 @@ export function SchoolIndicatorsPage() {
   const attendance=data?.student_attendance;
   const denominator=(attendance?.present || 0)+(attendance?.late || 0)+(attendance?.absent || 0);
   return <section className="operations-page school-reports">
-    <div className="page-heading"><div><p className="eyebrow">Operación · Módulos</p><h1>Indicadores</h1><p>La información de la escuela en un resumen, según tus permisos y alcance de consulta.</p></div><button type="button" className="button secondary" onClick={remote.refresh}>Actualizar</button></div>
+    <div className="page-heading"><div><p className="eyebrow">Operación</p><h1>Indicadores</h1><p>La información de la escuela en un resumen, según tus permisos y alcance de consulta.</p></div><button type="button" className="button secondary" onClick={remote.refresh}>Actualizar</button></div>
     {remote.loading ? <LoadingState/> : remote.error ? <ErrorState message={remote.error} onRetry={remote.refresh}/> : <>
       <p className="muted">Corte: {data.as_of}. Cifras acumuladas de los registros actuales; asistencia del alumnado de los últimos 30 días.</p>
       <div className="metrics school-report-metrics">

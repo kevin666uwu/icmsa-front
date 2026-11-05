@@ -8,12 +8,13 @@ import { apiFetch } from '../../services/api.js';
 vi.mock('../../services/api.js',()=>({apiFetch:vi.fn()}));
 afterEach(()=>vi.resetAllMocks());
 
-it('muestra las seis tarjetas y conserva Retención e Indicadores dentro de Módulos',async()=>{
+it('muestra solo cuatro tarjetas operativas sin Retención ni Indicadores',async()=>{
   apiFetch.mockResolvedValue({items:[]});
   render(<ModulesPage access={{permissions:['admissions.read','student_services.read','students.read','finance.read','indicators.read']}}/>);
-  expect(await screen.findByRole('link',{name:'Abrir Retención'})).toHaveAttribute('href','/portal/operacion/retencion');
-  expect(screen.getByRole('link',{name:'Abrir Indicadores'})).toHaveAttribute('href','/portal/operacion/indicadores');
-  expect(screen.getAllByRole('link',{name:/^Abrir /})).toHaveLength(6);
+  expect(await screen.findByRole('link',{name:'Abrir Alumnado'})).toBeTruthy();
+  expect(screen.queryByRole('link',{name:'Abrir Retención'})).toBeNull();
+  expect(screen.queryByRole('link',{name:'Abrir Indicadores'})).toBeNull();
+  expect(screen.getAllByRole('link',{name:/^Abrir /})).toHaveLength(4);
 });
 
 it('explica la falta de cohorte histórica y aplica los filtros sin fabricar un porcentaje',async()=>{

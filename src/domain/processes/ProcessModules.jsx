@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useAction, useRemote } from '../../hooks/useRemote.js';
 import { ErrorState, LoadingState } from '../../components/feedback/AsyncState.jsx';
 import { read, write } from '../api.js';
-import { operationModules } from '../operations/modules.js';
+import { operationModules, operationReports } from '../operations/modules.js';
 import { navigate } from '../../app/router/navigation.js';
 
 function ModuleEditor({processId,data,onSaved,onCancel}) {
@@ -28,7 +28,7 @@ export default function ProcessModules({processId,canManage}) {
     {remote.loading ? <LoadingState/> : remote.error ? <ErrorState message={remote.error} onRetry={remote.refresh}/> : editing ?
       <ModuleEditor processId={processId} data={remote.data} onCancel={()=>setEditing(false)} onSaved={()=>{setEditing(false);setNotice('Vínculos actualizados.');remote.refresh();}}/> : <>
         {linked.length ? <ul className="process-module-links">{linked.map(module=>{
-          const item=operationModules.find(candidate=>candidate.key===module.key);
+          const item=[...operationModules,...operationReports].find(candidate=>candidate.key===module.key);
           return item && <li key={module.key}><a href={item.path} onClick={event=>{if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();navigate(item.path);}}>{module.name}</a></li>;
         })}</ul> : <p>No hay módulos vinculados disponibles para tu cuenta.</p>}
         {canManage && (remote.data?.available || []).length>0 && <button type="button" className="button secondary" onClick={()=>setEditing(true)}>Vincular módulos</button>}
