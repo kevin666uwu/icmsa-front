@@ -42,11 +42,12 @@ describe('organigrama departamental', () => {
     expect(result.roots.get(1)[0].id).toBe(50);
   });
 
-  it('no coloca puestos de otro departamento debajo de una jefatura', () => {
+  it('respeta líneas jerárquicas entre departamentos, como KPIs Web', () => {
     const altered = { ...fixture, positions: [
       ...fixture.positions.map(p => p.id === 12 ? { ...p, parent_position_id: 10 } : p),
     ] };
     const result = organizationMaps(altered);
-    expect(result.roots.get(2).map(p => p.id)).toEqual([12]);
+    expect(result.roots.get(2) || []).toEqual([]);
+    expect(result.children.get(10).map(p => p.id)).toEqual([11,12]);
   });
 });
