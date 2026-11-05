@@ -167,3 +167,113 @@ fieldset{min-width:0}
 .department-processes ul{display:flex;gap:.4rem;flex-wrap:wrap;list-style:none;padding:0;margin:.6rem 0 0}
 .department-processes li{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:.4rem .7rem;font-size:.78rem}
 @media(max-width:640px){.department-org-heading{display:block}.department-org-heading>span{display:inline-block;margin-top:.6rem}}
+
+
+/* Verbatim KPIs Web organizational UI styles, brought into ICMSA */
+/* Dynamic organization and process governance. */
+.organization-page{max-width:1180px;margin:0 auto;display:grid;gap:18px}
+.org-notice{margin:0;padding:11px 14px;border:1px solid #bbf7d0;background:#f0fdf4;color:#166534;border-radius:10px;font-size:13px}
+.org-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.org-admin-card,.org-chart{background:#fff;border:1px solid #e3e8ef;border-radius:18px;padding:20px}
+.org-admin-card{display:grid;gap:12px}.org-admin-card h3{margin:0 0 4px}
+.org-admin-card label{display:grid;gap:6px;font-size:11px;font-weight:800;color:#465166}
+.org-admin-card input,.org-admin-card select{width:100%;min-height:42px;border:1px solid #d9e0ea;border-radius:10px;padding:9px 11px;background:#fff}
+.org-chart-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}.org-chart-head h3{margin:4px 0 0}
+.org-chart-head>span{font-size:12px;color:#64748b}
+.org-unit{border-left:2px solid #dbe3f2;padding:12px 0 4px 16px;margin:8px 0}
+.org-unit-head{display:flex;justify-content:space-between;align-items:center}.org-unit-head strong{font-size:15px}.org-unit-head small{display:block;color:#94a3b8;margin-top:3px}
+.org-positions{display:grid;gap:8px;margin-top:10px}.org-position{display:grid;grid-template-columns:minmax(140px,.45fr) minmax(0,1fr);gap:10px;align-items:center;background:#f8fafc;border:1px solid #e8edf4;border-radius:10px;padding:10px 12px}
+.org-position>span{font-weight:800;font-size:12px;color:#334155}.org-people{display:flex;flex-wrap:wrap;gap:7px}.org-person{background:#eef2ff;color:#394899;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700}.org-people small{color:#94a3b8}
+.org-children{margin-left:18px}
+@media(max-width:760px){.org-admin-grid{grid-template-columns:1fr}.org-position{grid-template-columns:1fr}.org-children{margin-left:8px}}
+
+
+/* Hierarchical organization chart */
+.org-chart-help{margin:-6px 0 18px;color:#64748b;font-size:12px}
+.org-tree{display:flex;justify-content:center;align-items:flex-start;overflow-x:auto;padding:10px 4px 22px}
+.org-tree-node{position:relative;display:flex;flex-direction:column;align-items:center;min-width:max-content;padding:0 10px}
+.org-tree-children{position:relative;display:flex;align-items:flex-start;justify-content:center;gap:6px;padding-top:30px}
+.org-tree-children:before{content:"";position:absolute;top:0;left:50%;height:18px;border-left:1px solid #aeb8c8}
+.org-tree-children>.org-tree-node:before{content:"";position:absolute;top:-12px;left:0;right:0;border-top:1px solid #aeb8c8}
+.org-tree-children>.org-tree-node:first-child:before{left:50%}
+.org-tree-children>.org-tree-node:last-child:before{right:50%}
+.org-tree-children>.org-tree-node:after{content:"";position:absolute;top:-12px;left:50%;height:12px;border-left:1px solid #aeb8c8}
+.org-node-card{width:210px;min-height:128px;border:1px solid #ccd6e4;border-radius:14px;background:#fff;padding:13px;text-align:left;cursor:pointer;box-shadow:0 2px 7px rgba(15,23,42,.04);transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
+.org-node-card:hover{transform:translateY(-2px);border-color:#7c8cf8;box-shadow:0 8px 20px rgba(15,23,42,.08)}
+.org-node-card strong,.org-node-card span,.org-node-card small{display:block}
+.org-node-card strong{font-size:13px;color:#0f172a}.org-node-card>span{margin-top:3px;font-size:12px;color:#334155}.org-node-card>small{margin-top:2px;color:#94a3b8}
+.org-node-counts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:11px;padding-top:9px;border-top:1px solid #eef2f7}
+.org-node-counts span{font-size:10px;line-height:1.25;color:#64748b}.org-node-counts b{display:block;font-size:15px;color:#27356f}
+.org-modal-backdrop{position:fixed;inset:0;z-index:90;background:rgba(15,23,42,.38);display:grid;place-items:center;padding:20px}
+.org-modal{position:relative;width:min(760px,100%);max-height:85vh;overflow:auto;background:#fff;border-radius:20px;padding:24px;box-shadow:0 24px 80px rgba(15,23,42,.22)}
+.org-modal h3{margin:5px 0 0;font-size:24px}.org-modal-position{margin:2px 0 18px;color:#64748b}
+.org-modal-close{position:absolute;right:16px;top:12px;border:0;background:transparent;font-size:28px;line-height:1;color:#64748b;cursor:pointer}
+.org-process-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}.org-process-columns h4{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:0 0 10px}.org-process-columns h4 span{min-width:28px;text-align:center;border-radius:999px;background:#eef2ff;color:#394899;padding:3px 7px;font-size:11px}
+.org-process-item{border:1px solid #e7ebf2;border-radius:11px;padding:10px 12px;margin-bottom:8px}.org-process-item strong,.org-process-item small{display:block}.org-process-item strong{font-size:12px}.org-process-item small{margin-top:3px;color:#7b8799}
+@media(max-width:700px){.org-node-card{width:180px}.org-process-columns{grid-template-columns:1fr}.org-tree{justify-content:flex-start}}
+
+/* Organization admin form consistency and inline chart editing. */
+.org-admin-card{grid-template-rows:auto 1fr auto}
+.org-admin-card .button{width:100%;min-height:46px;align-self:end}
+.org-admin-card form,.org-admin-card>div{min-width:0}
+.org-inline-editor{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0;padding:16px;border:1px solid #e5eaf2;border-radius:14px;background:#f8fafc}
+.org-inline-editor h4{grid-column:1/-1;margin:0 0 2px}
+.org-inline-editor label{display:grid;gap:6px;font-size:11px;font-weight:800;color:#465166}
+.org-inline-editor input,.org-inline-editor select{width:100%;min-height:42px;border:1px solid #d9e0ea;border-radius:10px;padding:9px 11px;background:#fff}
+.org-inline-editor .button{grid-column:1/-1;width:100%}
+@media(max-width:700px){.org-inline-editor{grid-template-columns:1fr}.org-inline-editor h4,.org-inline-editor .button{grid-column:auto}}
+
+/* Drag-and-drop process assignment inside the organization chart. */
+.org-process-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0 12px}
+.org-process-title-row h4{margin:4px 0 0}
+.org-edit-processes{border:1px solid #cfd7e6;background:#fff;color:#34438b;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer}
+.org-edit-processes:hover{background:#f7f8ff;border-color:#aeb9e8}
+.org-process-dnd{margin-top:12px}
+.org-dnd-help{margin:0 0 12px;color:#64748b;font-size:12px;line-height:1.5}
+.org-process-lanes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.org-process-lane{min-width:0;border:1px solid #dfe5ef;border-radius:14px;background:#f8fafc;overflow:hidden}
+.org-process-lane header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 12px;border-bottom:1px solid #e5eaf2;background:#fff}
+.org-process-lane header strong{font-size:12px}.org-process-lane header span{min-width:26px;text-align:center;border-radius:999px;background:#eef2ff;color:#394899;padding:3px 7px;font-size:10px;font-weight:900}
+.org-process-lane-responsible{border-color:#b8c6ff}.org-process-lane-related{border-color:#c7dfd5}
+.org-process-lane-list{min-height:180px;max-height:340px;overflow:auto;padding:9px;display:grid;align-content:start;gap:8px}
+.org-process-drag-card{display:grid;grid-template-columns:18px minmax(0,1fr);align-items:center;gap:7px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;padding:10px;cursor:grab;box-shadow:0 2px 6px rgba(15,23,42,.03)}
+.org-process-drag-card:active{cursor:grabbing}.org-process-drag-card strong{font-size:11px;line-height:1.35}.org-drag-handle{color:#94a3b8;font-weight:900;letter-spacing:-2px}
+.org-process-drop-empty{min-height:90px;border:1px dashed #cbd5e1;border-radius:10px;display:grid;place-items:center;text-align:center;padding:12px;color:#94a3b8;font-size:11px}
+.org-process-dnd-actions{display:flex;justify-content:flex-end;margin-top:12px}.org-process-dnd-actions .button{min-width:180px}
+@media(max-width:900px){.org-process-lanes{grid-template-columns:1fr}.org-process-lane-list{min-height:110px;max-height:240px}}
+
+/* Compact area creation and duplicate-awareness. */
+.org-area-card{grid-template-rows:auto auto auto auto auto}
+.org-area-card label{min-height:0}
+.org-existing-units{display:grid;gap:7px;padding:10px 0 2px;border-top:1px solid #edf1f6}
+.org-existing-units>small{font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#7b8799}
+.org-existing-units>div{display:flex;flex-wrap:wrap;gap:6px;max-height:76px;overflow:auto}
+.org-existing-units span{display:inline-flex;align-items:center;min-height:28px;padding:5px 9px;border-radius:999px;background:#f1f4f9;color:#465166;font-size:10px;font-weight:800;border:1px solid #e2e8f0}
+.org-existing-units em{font-size:11px;color:#94a3b8;font-style:normal}
+
+/* Per-person process editing control in organization cards. */
+.org-node-card{padding:0;overflow:hidden}
+.org-node-main{width:100%;min-height:128px;border:0;background:transparent;padding:13px;text-align:left;cursor:pointer;color:inherit}
+.org-node-main strong,.org-node-main span,.org-node-main small{display:block}
+.org-node-edit-processes{width:100%;border:0;border-top:1px solid #edf1f6;background:#f8fafc;color:#3b4a95;padding:9px 10px;font-size:10px;font-weight:900;cursor:pointer}
+.org-node-edit-processes:hover{background:#eef2ff}
+
+
+
+
+/* ICMSA adaptation: preserve KPIs Web composition under our institution portal. */
+.icmsa-kpis-org .knowledge-hero{background:#fff;border:1px solid #e5e9f0;border-radius:20px;padding:24px}
+.icmsa-kpis-org .knowledge-hero h1{font-size:clamp(1.6rem,3vw,2.1rem);margin:7px 0}
+.icmsa-kpis-org .knowledge-hero p{color:#68758b;line-height:1.7;margin-bottom:0}
+.icmsa-kpis-org .org-tree{min-height:145px}
+.icmsa-kpis-org .org-node-card{flex:0 0 auto}
+.icmsa-kpis-org .org-tree-children>.org-tree-node:before{pointer-events:none}
+.icmsa-kpis-org .org-process-drag-card>div{min-width:0}
+.icmsa-kpis-org .org-process-select-label{display:block;margin-top:7px;font-size:10px;color:#64748b}
+.icmsa-kpis-org .org-process-select-label select{display:block;width:100%;margin-top:4px;min-width:0;padding:4px;border:1px solid #d9e0ea;background:#fff;border-radius:7px;font-size:10px}
+.icmsa-kpis-org .org-form-help{font-size:11px;color:#64748b;line-height:1.5;margin:0}
+.icmsa-kpis-org .org-editor-note{grid-column:1/-1;color:#965b19;font-size:12px;margin:0}
+.icmsa-kpis-org .org-modal{max-height:min(90vh,850px)}
+.icmsa-kpis-org .org-chart-head h2{font-size:1.18rem;margin:4px 0 0}
+.icmsa-kpis-org .org-process-dnd .org-process-select-label{font-weight:500}
+@media(max-width:620px){.icmsa-kpis-org .org-modal{max-height:94vh;padding:18px}.icmsa-kpis-org .org-admin-grid{grid-template-columns:1fr}.icmsa-kpis-org .org-node-card{width:180px}}
