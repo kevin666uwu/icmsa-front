@@ -31,3 +31,14 @@ La pantalla de Organización de ICMSA comparte el diseño visual de `Kevins4l/KP
 
 ### Revisión
 Validar jerarquía de departamentos, expansión de tarjetas, edición de puestos, proceso en las tres columnas, permisos restringidos y visualización móvil.
+
+
+## Navegación simplificada de Organización (noviembre de 2026)
+
+El menú interno muestra únicamente **Organización → Organigrama** y mantiene **Operación → Procesos** como módulo separado. Se eliminaron los accesos laterales redundantes de Personal, Departamentos, Áreas y Puestos, sin eliminar sus tablas ni endpoints. En la misma página de Organigrama existe una sección desplegable **Gestionar estructura y vacantes**, con catálogos y edición de departamentos, áreas, personal, puestos, plazas vacantes y puestos inactivos. Los formularios de alta y asignación de KPIs Web permanecen en la vista de Organigrama.
+
+Servicios Escolares y Servicios Estudiantiles son departamentos institucionales, por lo que se retiraron del menú administrativo como entradas independientes. Sus registros de trámites/casos no se borraron; los enlaces anteriores a esas páginas siguen siendo compatibles si un usuario tiene autorización. El portal del alumno mantiene los accesos a trámites, documentos y saldos.
+
+Los enlaces guardados a rutas de organización antiguas abren ahora Organigrama. Indicadores, asistencia, academia, admisión, biblioteca y administración conservan sus entradas y permisos independientes.
+
+**No se modificó el esquema de base de datos para esta simplificación de navegación.** Sigue siendo necesario desplegar y migrar el backend 0.4 para utilizar puestos sin área. No confundir un despliegue correcto de Vercel con pruebas completas de API/BD.
