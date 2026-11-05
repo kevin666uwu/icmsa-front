@@ -16,8 +16,6 @@ export default function OrgDirectory({ maps, access, onSaved, onPositionSelect }
   const permissions=access.permissions||[];
   const canManageOrganization=permissions.includes('organization.write');
   const canManageEmployees=permissions.includes('employees.write');
-  const canManageDepartment=access.role==='super_admin';
-  const departments=[...maps.departments.values()].sort((a,b)=>(a.sort_order??0)-(b.sort_order??0)||a.name.localeCompare(b.name,'es'));
   const areas=[...maps.areas.values()].sort((a,b)=>a.name.localeCompare(b.name,'es'));
   const employees=[...maps.employees.values()].sort((a,b)=>displayName(a).localeCompare(displayName(b),'es'));
   const positions=[...maps.positions.values()].sort((a,b)=>a.name.localeCompare(b.name,'es'));
@@ -43,21 +41,13 @@ export default function OrgDirectory({ maps, access, onSaved, onPositionSelect }
   }
   return <details className="org-directory" aria-label="Gestión organizacional">
     <summary className="org-directory-summary">
-      <span><strong>Gestionar estructura y vacantes</strong><small>Departamentos, áreas, personal y plazas desde un solo lugar</small></span>
+      <span><strong>Gestionar áreas, personal y vacantes</strong><small>Áreas, personal y plazas en un mismo lugar</small></span>
       <span className="org-directory-summary-count">{vacancies.length} vacantes</span>
     </summary>
     <p className="org-directory-intro">Estas son funciones internas de Organigrama, no apartados independientes del menú. El puesto determina la jerarquía; las áreas solo clasifican funciones y los procesos se gestionan en su módulo.</p>
     {(loadError||action.error)&&<ErrorState message={loadError||action.error}/>}
     {fetching&&<p role="status">Abriendo registro…</p>}
     <div className="org-directory-sections">
-      <section className="org-directory-section">
-        <header><div><h3>Departamentos</h3><small>{departments.length} unidades institucionales</small></div>
-          {canManageDepartment&&<button type="button" onClick={()=>edit('departments')}>Agregar</button>}</header>
-        <div className="org-directory-records">{departments.map(d=><div className="org-directory-record" key={d.id}>
-          <div><strong>{d.name}</strong><small>{d.active===false?'Inactivo':'Activo'} · {areas.filter(a=>a.department_id===d.id).length} áreas · {positions.filter(p=>maps.positionDepartment(p)===d.id).length} puestos</small></div>
-          {canManageDepartment&&<button type="button" onClick={()=>edit('departments',d.id)}>Editar</button>}
-        </div>)}</div>
-      </section>
       <section className="org-directory-section">
         <header><div><h3>Áreas funcionales</h3><small>{areas.length} áreas (opcionales)</small></div>
           {canManageOrganization&&<button type="button" onClick={()=>edit('areas')}>Agregar</button>}</header>
