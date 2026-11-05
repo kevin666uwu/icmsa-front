@@ -13,10 +13,15 @@ export default function ResourcePage({ name, spec, access }) {
   const loader = useCallback(signal => read(spec.path + '?' + new URLSearchParams({ q, status, sort, offset, limit: 25 }), signal), [spec, q, status, sort, offset]);
   const remote = useRemote(loader);
   const canWrite = access.permissions.includes(spec.permission + '.write');
+  const contextHelp = {
+    areas: 'Las áreas funcionales son opcionales: sirven para clasificar actividades. No necesitas crear una por cada puesto o responsable.',
+    positions: 'Cada puesto pertenece a un departamento y puede depender directamente de él. El área funcional es opcional; la jerarquía se configura con el superior inmediato.',
+    processes: 'Cada proceso pertenece a un departamento. Una misma persona puede responsabilizarse de varios procesos sin crear puestos ni áreas adicionales.',
+  };
   const fields = Object.entries(spec.fields).filter(([key]) => !['description', 'notes', 'curp', 'phone', 'email', 'user_id'].includes(key)).slice(0, 5);
   function changed(setter, value) { setter(value); setOffset(0); }
   return <section>
-    <div className="page-heading"><div><p className="eyebrow">ICMSA · Operación institucional</p><h1>{spec.title}</h1><p>Consulta y administra los registros dentro de tu alcance autorizado.</p></div>{canWrite && <button className="button primary" onClick={() => setEdit(null)}>Agregar</button>}</div>
+    <div className="page-heading"><div><p className="eyebrow">ICMSA · Operación institucional</p><h1>{spec.title}</h1><p>{contextHelp[name] || 'Consulta y administra los registros dentro de tu alcance autorizado.'}</p></div>{canWrite && <button className="button primary" onClick={() => setEdit(null)}>Agregar</button>}</div>
     {notice && <p className="notice" role="status">{notice}</p>}
     <div className="toolbar"><label>Buscar<input value={q} onChange={e => changed(setQ, e.target.value)} placeholder="Buscar registros…" /></label>
       {spec.fields.status?.choices && <label>Estado<select value={status} onChange={e => changed(setStatus, e.target.value)}><option value="">Todos</option>{spec.fields.status.choices.map(s => <option key={s}>{s}</option>)}</select></label>}
