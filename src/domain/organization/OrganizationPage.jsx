@@ -1,162 +1,395 @@
-import { useMemo, useState } from 'react';
-import { useRemote, useAction } from '../../hooks/useRemote.js';
-import { LoadingState, ErrorState } from '../../components/feedback/AsyncState.jsx';
-import { read, write, displayName } from '../api.js';
-import PositionTree from './PositionTree.jsx';
-import PositionModal from './PositionModal.jsx';
-import { organizationMaps } from './organizationMaps.js';
-import OrgDirectory from './OrgDirectory.jsx';
-import DepartmentManager from './DepartmentManager.jsx';
+import { useEffect, useMemo, useState } from "react";
+import { apiFetch } from "../../services/api.js";
 
-const loadOrganization=signal=>read('/organization',signal);
-const initialStaff={first_name:'',last_name:'',employee_number:''};
+const emptyUser = { name: "", email: "", password: "", role: "member", status: "active" };
+const EMPTY_PROCESS_OVERVIEW = { responsible: [], related: [] };
 
 export default function OrganizationPage({ access }) {
-  const remote=useRemote(loadOrganization);
-  const action=useAction();
-  const [notice,setNotice]=useState('');
-  const [selected,setSelected]=useState(null);
-  const [staff,setStaff]=useState(initialStaff);
-  const [areaName,setAreaName]=useState(''),[areaDepartment,setAreaDepartment]=useState('');
-  const [positionName,setPositionName]=useState(''),[positionDepartment,setPositionDepartment]=useState(''),[positionArea,setPositionArea]=useState(''),[positionParent,setPositionParent]=useState('');
-  const [selectedEmployee,setSelectedEmployee]=useState(''),[selectedPosition,setSelectedPosition]=useState('');
-  const maps=useMemo(()=>remote.data?organizationMaps(remote.data):null,[remote.data]);
-  const canManage=access.permissions.includes('organization.write');
-  const canEditPosts=canManage && access.permissions.includes('employees.write');
-  const canAssignProcesses=access.permissions.includes('employees.write') && access.permissions.includes('processes.write');
-  const canCreateStaff=access.role==='super_admin';
-  const departments=maps?[...maps.departments.values()].filter(d=>d.active!==false).sort((a,b)=>(a.sort_order??0)-(b.sort_order??0)||a.name.localeCompare(b.name,'es')):[];
-  const allDepartments=maps?[...maps.departments.values()].sort((a,b)=>(a.sort_order??0)-(b.sort_order??0)||a.name.localeCompare(b.name,'es')):[];
-  const activePositions=maps?[...maps.positions.values()].filter(p=>p.active!==false):[];
-  const availableEmployees=maps?[...maps.employees.values()].filter(e=>e.status==='active'):[];
-  const roots=maps?[
-    ...allDepartments.flatMap(d=>maps.roots.get(d.id)||[]),
-    ...(maps.roots.get(null)||[]),
-  ]:[];
-  const submit=fn=>event=>{
-    event.preventDefault();
-    action.run(async()=>{
-      await fn();
-      setNotice('Cambios guardados correctamente.');
-      remote.refresh();
-    });
+  const isAdmin = access?.role === "super_admin";
+  const [data, setData] = useState({ units: [], positions: [], memberships: [], users: [], process_overview: {} });
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [unitName, setUnitName] = useState("");
+  const [parentId, setParentId] = useState("");
+  const [positionName, setPositionName] = useState("");
+  const [positionUnitId, setPositionUnitId] = useState("");
+  const [parentPositionId, setParentPositionId] = useState("");
+  const [userForm, setUserForm] = useState(emptyUser);
+  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedPosition, setSelectedPosition] = useState("");
+  const [openPosition, setOpenPosition] = useState(null);
+  const [editingProcesses, setEditingProcesses] = useState(false);
+  const [processDraft, setProcessDraft] = useState({ responsible: [], related: [] });
+  const [draggedProcessId, setDraggedProcessId] = useState(null);
+  const [savingProcesses, setSavingProcesses] = useState(false);
+  const [openProcessesImmediately, setOpenProcessesImmediately] = useState(false);
+
+  async function load() {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await apiFetch("/api/v1/organization/kpis");
+      setData(response);
+    } catch (e) {
+      setError(e.message || "No fue posible cargar el organigrama.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { load(); }, []);
+
+  const occupantByPosition = useMemo(() => {
+    const map = new Map();
+    for (const item of data.memberships || []) {
+      const person = (data.users || []).find(candidate => candidate.id === item.user_id);
+      if (person && !map.has(item.position_id)) map.set(item.position_id, person);
+    }
+    return map;
+  }, [data]);
+
+  const unitById = useMemo(() => new Map((data.units || []).map(unit => [unit.id, unit])), [data.units]);
+  const activePositions = useMemo(() => (data.positions || []).filter(position => position.active), [data.positions]);
+  const positionChildren = parentIdValue => activePositions.filter(position =>
+    (position.parent_position_id || null) === (parentIdValue || null)
+  );
+
+  const overviewFor = userId => {
+    if (!userId) return EMPTY_PROCESS_OVERVIEW;
+    return data.process_overview?.[String(userId)] || data.process_overview?.[userId] || EMPTY_PROCESS_OVERVIEW;
   };
-  const createEmployee=submit(async()=>{
-    await write('/employees',{...staff,status:'active'});
-    setStaff(initialStaff);
-    setNotice('Personal registrado.');
-  });
-  const createArea=submit(async()=>{
-    await write('/areas',{department_id:Number(areaDepartment),name:areaName,description:'',active:true,sort_order:0});
-    setAreaName('');setAreaDepartment('');
-  });
-  const createPosition=submit(async()=>{
-    await write('/positions',{
-      name:positionName,department_id:Number(positionDepartment),area_id:positionArea?Number(positionArea):null,
-      parent_position_id:positionParent?Number(positionParent):null,active:true,sort_order:0,
+
+  async function createUnit(e) {
+    e.preventDefault(); setError(""); setNotice("");
+    try {
+      await apiFetch("/api/v1/organization/units", {
+        method: "POST",
+        body: JSON.stringify({ name: unitName, parent_id: parentId ? Number(parentId) : null }),
+      });
+      setUnitName(""); setParentId(""); setNotice("Área creada."); await load();
+    } catch (e) { setError(e.message); }
+  }
+
+  async function createPosition(e) {
+    e.preventDefault(); setError(""); setNotice("");
+    try {
+      await apiFetch("/api/v1/organization/positions", {
+        method: "POST",
+        body: JSON.stringify({
+          name: positionName,
+          org_unit_id: Number(positionUnitId),
+          parent_position_id: parentPositionId ? Number(parentPositionId) : null,
+        }),
+      });
+      setPositionName(""); setPositionUnitId(""); setParentPositionId("");
+      setNotice("Puesto creado."); await load();
+    } catch (e) { setError(e.message); }
+  }
+
+  async function createUser(e) {
+    e.preventDefault(); setError(""); setNotice("");
+    try {
+      await apiFetch("/api/v1/organization/users", { method: "POST", body: JSON.stringify(userForm) });
+      setUserForm(emptyUser); setNotice("Usuario creado."); await load();
+    } catch (e) { setError(e.message); }
+  }
+
+  async function assignPosition(e) {
+    e.preventDefault(); setError(""); setNotice("");
+    try {
+      await apiFetch("/api/v1/organization/users/" + selectedUser + "/position", {
+        method: "PUT", body: JSON.stringify({ position_id: Number(selectedPosition) }),
+      });
+      setNotice("Puesto asignado."); await load();
+    } catch (e) { setError(e.message); }
+  }
+
+  function PositionCard({ position }) {
+    const occupant = occupantByPosition.get(position.id);
+    const overview = overviewFor(occupant?.id);
+    const area = unitById.get(position.org_unit_id)?.name || "Sin área";
+
+    function openDetail() {
+      setOpenProcessesImmediately(false);
+      setOpenPosition(position);
+    }
+
+    function openProcessEditor(event) {
+      event.stopPropagation();
+      setOpenProcessesImmediately(true);
+      setOpenPosition(position);
+    }
+
+    return <div className="org-node-card">
+      <button type="button" className="org-node-main" onClick={openDetail}>
+        <strong>{occupant?.name || "Vacante"}</strong>
+        <span>{position.name}</span>
+        <small>{area}</small>
+        <div className="org-node-counts">
+          <span><b>{overview.responsible.length}</b> Procesos del usuario</span>
+          <span><b>{overview.related.length}</b> Procesos relacionados</span>
+        </div>
+      </button>
+      {isAdmin && occupant && <button type="button" className="org-node-edit-processes" onClick={openProcessEditor}>
+        Editar procesos
+      </button>}
+    </div>;
+  }
+
+  function PositionTree({ position }) {
+    const children = positionChildren(position.id);
+    return <div className="org-tree-node">
+      <PositionCard position={position} />
+      {children.length > 0 && <div className="org-tree-children">
+        {children.map(child => <PositionTree key={child.id} position={child} />)}
+      </div>}
+    </div>;
+  }
+
+  const selectedOccupant = openPosition ? occupantByPosition.get(openPosition.id) : null;
+  const selectedOverview = overviewFor(selectedOccupant?.id);
+  const [editPositionName, setEditPositionName] = useState("");
+  const [editPositionUnitId, setEditPositionUnitId] = useState("");
+  const [editParentPositionId, setEditParentPositionId] = useState("");
+  const [editOccupantId, setEditOccupantId] = useState("");
+
+  useEffect(() => {
+    if (!openPosition) return;
+    setEditPositionName(openPosition.name || "");
+    setEditPositionUnitId(String(openPosition.org_unit_id || ""));
+    setEditParentPositionId(openPosition.parent_position_id ? String(openPosition.parent_position_id) : "");
+    setEditOccupantId(selectedOccupant ? String(selectedOccupant.id) : "");
+    setProcessDraft({
+      responsible: selectedOverview.responsible.map(process => process.id),
+      related: selectedOverview.related.map(process => process.id),
     });
-    setPositionName('');setPositionDepartment('');setPositionArea('');setPositionParent('');
-  });
-  const assignEmployee=submit(async()=>{
-    await write('/employees/'+selectedEmployee+'/position',{position_id:Number(selectedPosition)},'PUT');
-    setSelectedEmployee('');setSelectedPosition('');
-  });
-  const didSave=message=>{setSelected(null);setNotice(message||'Cambios guardados.');remote.refresh()};
+    setEditingProcesses(openProcessesImmediately);
+  }, [openPosition, openProcessesImmediately, selectedOccupant, selectedOverview.responsible, selectedOverview.related]);
+
+  const processById = useMemo(
+    () => new Map((data.processes || []).map(process => [process.id, process])),
+    [data.processes],
+  );
+
+  const availableProcessIds = (data.processes || [])
+    .map(process => process.id)
+    .filter(processId =>
+      !processDraft.responsible.includes(processId) &&
+      !processDraft.related.includes(processId)
+    );
+
+  function moveProcess(processId, lane) {
+    const numericId = Number(processId);
+    setProcessDraft(current => ({
+      responsible: lane === "responsible"
+        ? [...current.responsible.filter(id => id !== numericId), numericId]
+        : current.responsible.filter(id => id !== numericId),
+      related: lane === "related"
+        ? [...current.related.filter(id => id !== numericId), numericId]
+        : current.related.filter(id => id !== numericId),
+    }));
+  }
+
+  function dropProcess(event, lane) {
+    event.preventDefault();
+    const processId = Number(event.dataTransfer.getData("text/process-id") || draggedProcessId);
+    if (processId) moveProcess(processId, lane);
+    setDraggedProcessId(null);
+  }
+
+  async function saveProcessAssignments() {
+    if (!selectedOccupant) return;
+    setSavingProcesses(true); setError(""); setNotice("");
+    try {
+      await apiFetch("/api/v1/organization/users/" + selectedOccupant.id + "/processes", {
+        method: "PUT",
+        body: JSON.stringify({
+          responsible_ids: processDraft.responsible,
+          related_ids: processDraft.related,
+        }),
+      });
+      setNotice("Procesos del usuario actualizados.");
+      setEditingProcesses(false);
+      await load();
+    } catch (e) {
+      setError(e.message || "No fue posible actualizar los procesos.");
+    } finally {
+      setSavingProcesses(false);
+    }
+  }
+
+  async function savePositionEdits(e) {
+    e.preventDefault(); setError(""); setNotice("");
+    try {
+      await apiFetch("/api/v1/organization/positions/" + openPosition.id + "/editor", {
+        method: "PUT",
+        body: JSON.stringify({
+          name: editPositionName,
+          org_unit_id: Number(editPositionUnitId),
+          parent_position_id: editParentPositionId ? Number(editParentPositionId) : null,
+          occupant_id: editOccupantId ? Number(editOccupantId) : null,
+        }),
+      });
+      setNotice("Puesto actualizado.");
+      setOpenPosition(null);
+      await load();
+    } catch (e) { setError(e.message || "No fue posible guardar el puesto."); }
+  }
+
+  if (loading) return <div className="dashboard-state" role="status"><div className="spinner"/><p>Cargando organización…</p></div>;
 
   return <div className="organization-page icmsa-kpis-org">
     <header className="knowledge-hero">
-      <span className="eyebrow">GOBIERNO DE PROCESOS</span>
-      <h1>Organigrama</h1>
-      <p>{canManage
-        ? 'Administra puestos, personal y áreas funcionales. El organigrama indica quién reporta a quién; los procesos se asignan independientemente a las personas.'
-        : 'Consulta el organigrama institucional y los procesos relacionados con cada puesto.'}</p>
+      <span className="portal-kicker">GOBIERNO DE PROCESOS</span>
+      <h2>Organigrama</h2>
+      <p>{isAdmin
+        ? "Administra usuarios, áreas, puestos y asignaciones desde una sola pantalla, como en KPIs Web."
+        : "Consulta el organigrama y los procesos asociados a cada puesto."}</p>
     </header>
 
+    {error && <p className="form-error" role="alert">{error}</p>}
     {notice && <p className="org-notice" role="status">{notice}</p>}
-    {action.error && <ErrorState message={action.error}/>}
-    {remote.loading && <LoadingState label="Cargando organización…"/>}
-    {remote.error && <ErrorState message={remote.error} onRetry={remote.refresh}/>}
 
-    {maps && <>
-      <DepartmentManager maps={maps} access={access} onSaved={didSave}/>
+    {isAdmin && <section className="org-admin-grid">
+      <form className="org-admin-card" onSubmit={createUser}><h3>Agregar usuario</h3>
+        <label>Nombre<input required value={userForm.name} onChange={e => setUserForm(value => ({ ...value, name: e.target.value }))} /></label>
+        <label>Correo<input required type="email" value={userForm.email} onChange={e => setUserForm(value => ({ ...value, email: e.target.value }))} /></label>
+        <label>Contraseña temporal<input required minLength={12} type="password" value={userForm.password} onChange={e => setUserForm(value => ({ ...value, password: e.target.value }))} /></label>
+        <label>Rol<select value={userForm.role} onChange={e => setUserForm(value => ({ ...value, role: e.target.value }))}><option value="member">Miembro</option><option value="admin">Administrador (acceso total)</option></select></label>
+        <button className="button">Crear usuario</button>
+      </form>
 
-      {(canManage||canCreateStaff||canEditPosts) && <section className="org-admin-grid" aria-label="Administración de estructura organizacional">
-        {canCreateStaff && <form className="org-admin-card" onSubmit={createEmployee}>
-          <h3>Agregar personal</h3>
-          <label>Nombre<input required maxLength={255} value={staff.first_name} onChange={e=>setStaff(v=>({...v,first_name:e.target.value}))}/></label>
-          <label>Apellidos<input required maxLength={255} value={staff.last_name} onChange={e=>setStaff(v=>({...v,last_name:e.target.value}))}/></label>
-          <label>Número de empleado<input required maxLength={255} value={staff.employee_number} onChange={e=>setStaff(v=>({...v,employee_number:e.target.value}))}/></label>
-          <p className="org-form-help">Para crear credenciales de acceso, utiliza Administración → Usuarios.</p>
-          <button className="button primary" disabled={action.busy}>Crear empleado</button>
-        </form>}
+      <form className="org-admin-card org-area-card" onSubmit={createUnit}><h3>Agregar área</h3>
+        <label>Nombre<input required value={unitName} onChange={e => setUnitName(e.target.value)} /></label>
+        <label>Área superior<select value={parentId} onChange={e => setParentId(e.target.value)}><option value="">Sin área superior</option>{(data.units || []).filter(item => item.active).map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+        <div className="org-existing-units">
+          <small>Áreas existentes</small>
+          <div>{(data.units || []).filter(item => item.active).length
+            ? (data.units || []).filter(item => item.active).map(item => <span key={item.id}>{item.name}</span>)
+            : <em>Aún no hay áreas creadas.</em>}</div>
+        </div>
+        <button className="button">Crear área</button>
+      </form>
 
-        {canManage && <form className="org-admin-card org-area-card" onSubmit={createArea}>
-          <h3>Agregar área funcional</h3>
-          <label>Departamento<select required value={areaDepartment} onChange={e=>setAreaDepartment(e.target.value)}>
-            <option value="">Seleccionar departamento</option>{departments.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}
+      <form className="org-admin-card" onSubmit={createPosition}><h3>Agregar puesto</h3>
+        <label>Área<select required value={positionUnitId} onChange={e => setPositionUnitId(e.target.value)}><option value="">Seleccionar área</option>{(data.units || []).filter(item => item.active).map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+        <label>Puesto<input required value={positionName} onChange={e => setPositionName(e.target.value)} placeholder="Supervisor, Analista…" /></label>
+        <label>Reporta a<select value={parentPositionId} onChange={e => setParentPositionId(e.target.value)}><option value="">Nivel superior / raíz</option>{activePositions.map(item => <option key={item.id} value={item.id}>{item.name} · {occupantByPosition.get(item.id)?.name || "Vacante"}</option>)}</select></label>
+        <button className="button">Crear puesto</button>
+      </form>
+
+      <form className="org-admin-card" onSubmit={assignPosition}><h3>Asignar persona</h3>
+        <label>Usuario<select required value={selectedUser} onChange={e => setSelectedUser(e.target.value)}><option value="">Seleccionar usuario</option>{(data.users || []).filter(item => item.status === "active").map(item => <option key={item.id} value={item.id}>{item.name}{item.email ? " · " + item.email : ""}</option>)}</select></label>
+        <label>Puesto<select required value={selectedPosition} onChange={e => setSelectedPosition(e.target.value)}><option value="">Seleccionar puesto</option>{activePositions.map(item => {
+          const occupant = occupantByPosition.get(item.id);
+          const isCurrentUser = occupant && String(occupant.id) === String(selectedUser);
+          const status = occupant ? (isCurrentUser ? "Asignado a este usuario" : "Ocupado por " + occupant.name) : "Vacante";
+          return <option key={item.id} value={item.id}>{item.name} · {unitById.get(item.org_unit_id)?.name || "Área"} · {status}</option>;
+        })}</select></label>
+        <button className="button">Asignar puesto</button>
+      </form>
+    </section>}
+
+    <section className="org-chart">
+      <div className="org-chart-head">
+        <div><span className="portal-kicker">ESTRUCTURA ACTUAL</span><h3>Organigrama jerárquico</h3></div>
+        <span>{(data.users || []).filter(item => item.status === "active").length} personas</span>
+      </div>
+      <p className="org-chart-help">Selecciona un puesto para consultar sus procesos responsables y relacionados.</p>
+      <div className="org-tree">
+        {positionChildren(null).length
+          ? positionChildren(null).map(position => <PositionTree key={position.id} position={position} />)
+          : <div className="empty-card">Aún no hay puestos de nivel raíz. {isAdmin ? "Define la jerarquía desde Agregar puesto." : ""}</div>}
+      </div>
+    </section>
+
+    {openPosition && <div className="org-modal-backdrop" role="presentation" onMouseDown={() => setOpenPosition(null)}>
+      <section className="org-modal" role="dialog" aria-modal="true" aria-label="Procesos del puesto" onMouseDown={event => event.stopPropagation()}>
+        <button className="org-modal-close" type="button" onClick={() => setOpenPosition(null)}>×</button>
+        <span className="portal-kicker">{unitById.get(openPosition.org_unit_id)?.name || "ORGANIZACIÓN"}</span>
+        <h3>{selectedOccupant?.name || "Vacante"}</h3>
+        <p className="org-modal-position">{openPosition.name}</p>
+        {isAdmin && <form className="org-inline-editor" onSubmit={savePositionEdits}>
+          <h4>Editar puesto</h4>
+          <label>Nombre del puesto<input required value={editPositionName} onChange={e => setEditPositionName(e.target.value)} /></label>
+          <label>Área<select required value={editPositionUnitId} onChange={e => setEditPositionUnitId(e.target.value)}>
+            {(data.units || []).filter(item => item.active).map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
           </select></label>
-          <label>Nombre del área<input required maxLength={255} value={areaName} onChange={e=>setAreaName(e.target.value)}/></label>
-          <div className="org-existing-units"><small>Áreas existentes</small>
-            <div>{[...maps.areas.values()].filter(a=>a.active!==false && (!areaDepartment||a.department_id===Number(areaDepartment))).length
-              ? [...maps.areas.values()].filter(a=>a.active!==false && (!areaDepartment||a.department_id===Number(areaDepartment))).map(a=><span key={a.id}>{a.name}</span>)
-              : <em>No hay áreas registradas.</em>}</div>
-          </div>
-          <button className="button primary" disabled={action.busy}>Crear área</button>
-        </form>}
-
-        {canManage && <form className="org-admin-card" onSubmit={createPosition}>
-          <h3>Agregar puesto</h3>
-          <label>Departamento<select required value={positionDepartment} onChange={e=>{setPositionDepartment(e.target.value);setPositionArea('');setPositionParent('')}}>
-            <option value="">Seleccionar departamento</option>{departments.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}
-          </select></label>
-          <label>Área funcional (opcional)<select value={positionArea} onChange={e=>setPositionArea(e.target.value)}>
-            <option value="">Directamente en el departamento</option>
-            {[...maps.areas.values()].filter(a=>a.department_id===Number(positionDepartment)&&a.active!==false).map(a=><option key={a.id} value={a.id}>{a.name}</option>)}
-          </select></label>
-          <label>Puesto<input required maxLength={255} value={positionName} onChange={e=>setPositionName(e.target.value)} placeholder="Responsable, Analista…"/></label>
-          <label>Reporta a<select value={positionParent} onChange={e=>setPositionParent(e.target.value)}>
+          <label>Reporta a<select value={editParentPositionId} onChange={e => setEditParentPositionId(e.target.value)}>
             <option value="">Nivel superior / raíz</option>
-            {activePositions.map(p=><option key={p.id} value={p.id}>{p.name} · {maps.occupants.get(p.id)?displayName(maps.occupants.get(p.id)):'Vacante'}</option>)}
+            {activePositions.filter(item => item.id !== openPosition.id).map(item => <option key={item.id} value={item.id}>{item.name} · {occupantByPosition.get(item.id)?.name || "Vacante"}</option>)}
           </select></label>
-          <button className="button primary" disabled={action.busy}>Crear puesto</button>
+          <label>Ocupante<select value={editOccupantId} onChange={e => setEditOccupantId(e.target.value)}>
+            <option value="">Vacante</option>
+            {(data.users || []).filter(item => item.status === "active").map(item => <option key={item.id} value={item.id}>{item.name}{item.email ? " · " + item.email : ""}</option>)}
+          </select></label>
+          <button className="button" type="submit">Guardar cambios</button>
         </form>}
 
-        {canEditPosts && <form className="org-admin-card" onSubmit={assignEmployee}>
-          <h3>Asignar persona</h3>
-          <label>Empleado<select required value={selectedEmployee} onChange={e=>setSelectedEmployee(e.target.value)}>
-            <option value="">Seleccionar empleado</option>{availableEmployees.map(e=><option key={e.id} value={e.id}>{displayName(e)}</option>)}
-          </select></label>
-          <label>Puesto<select required value={selectedPosition} onChange={e=>setSelectedPosition(e.target.value)}>
-            <option value="">Seleccionar puesto</option>{activePositions.map(p=>{
-              const occupant=maps.occupants.get(p.id);
-              const status=occupant?(String(occupant.id)===selectedEmployee?'Asignado a esta persona':'Ocupado por '+displayName(occupant)):'Vacante';
-              return <option key={p.id} value={p.id}>{p.name} · {maps.departments.get(maps.positionDepartment(p))?.name||'Departamento'} · {status}</option>;
-            })}
-          </select></label>
-          <p className="org-form-help">Una persona ocupa una plaza principal. La reasignación conserva el historial.</p>
-          <button className="button primary" disabled={action.busy}>Asignar puesto</button>
-        </form>}
-      </section>}
+        <div className="org-process-title-row">
+          <div>
+            <span className="portal-kicker">PROCESOS</span>
+            <h4>Participación en procesos</h4>
+          </div>
+          {isAdmin && selectedOccupant && <button
+            type="button"
+            className="org-edit-processes"
+            onClick={() => setEditingProcesses(value => !value)}
+          >{editingProcesses ? "Cancelar edición" : "Editar procesos"}</button>}
+        </div>
 
-      <section className="org-chart">
-        <div className="org-chart-head">
-          <div><span className="eyebrow">ESTRUCTURA ACTUAL</span><h2>Organigrama jerárquico</h2></div>
-          <span>{availableEmployees.length} personas</span>
-        </div>
-        <p className="org-chart-help">Selecciona una tarjeta para editar el puesto o consultar procesos responsables y relacionados, como en KPIs Web.</p>
-        <div className="org-tree" role="group" aria-label="Jerarquía de puestos">
-          {roots.length ? roots.map(position=><PositionTree key={position.id} position={position} maps={maps}
-            canEditProcesses={canAssignProcesses} onSelect={(p,showProcesses)=>setSelected({position:p,showProcesses})}/>) :
-            <div className="empty-card">Todavía no existen puestos raíz. Crea tu primer puesto directamente en un departamento.</div>}
-        </div>
+        {!editingProcesses && <div className="org-process-columns">
+          <div><h4>Procesos del usuario <span>{selectedOverview.responsible.length}</span></h4>
+            {selectedOverview.responsible.length ? selectedOverview.responsible.map(process => <div className="org-process-item" key={process.id}><strong>{process.name}</strong><small>Responsable · {process.permission}</small></div>) : <p className="muted">No tiene procesos como responsable.</p>}
+          </div>
+          <div><h4>Procesos relacionados con el usuario <span>{selectedOverview.related.length}</span></h4>
+            {selectedOverview.related.length ? selectedOverview.related.map(process => <div className="org-process-item" key={process.id}><strong>{process.name}</strong><small>Involucrado · {process.permission}</small></div>) : <p className="muted">No tiene procesos relacionados.</p>}
+          </div>
+        </div>}
+
+        {editingProcesses && <div className="org-process-dnd">
+          <p className="org-dnd-help">Arrastra cada proceso a la columna que corresponda. “Procesos del usuario” lo asigna como responsable; “Relacionados” lo registra como involucrado.</p>
+          <div className="org-process-lanes">
+            {[
+              ["available", "Lista de procesos", availableProcessIds],
+              ["responsible", "Procesos del usuario", processDraft.responsible],
+              ["related", "Procesos relacionados", processDraft.related],
+            ].map(([lane, title, ids]) => <section
+              key={lane}
+              className={"org-process-lane org-process-lane-" + lane}
+              onDragOver={event => event.preventDefault()}
+              onDrop={event => dropProcess(event, lane)}
+            >
+              <header><strong>{title}</strong><span>{ids.length}</span></header>
+              <div className="org-process-lane-list">
+                {ids.length ? ids.map(processId => {
+                  const process = processById.get(processId) || { id: processId, name: "Proceso #" + processId };
+                  return <article
+                    key={processId}
+                    className="org-process-drag-card"
+                    draggable
+                    onDragStart={event => {
+                      setDraggedProcessId(processId);
+                      event.dataTransfer.setData("text/process-id", String(processId));
+                      event.dataTransfer.effectAllowed = "move";
+                    }}
+                    onDragEnd={() => setDraggedProcessId(null)}
+                  >
+                    <span className="org-drag-handle" aria-hidden="true">⋮⋮</span>
+                    <strong>{process.name}</strong>
+                  </article>;
+                }) : <div className="org-process-drop-empty">Suelta procesos aquí</div>}
+              </div>
+            </section>)}
+          </div>
+          <div className="org-process-dnd-actions">
+            <button type="button" className="button" disabled={savingProcesses} onClick={saveProcessAssignments}>
+              {savingProcesses ? "Guardando…" : "Guardar procesos"}
+            </button>
+          </div>
+        </div>}
       </section>
-
-      <OrgDirectory maps={maps} access={access} onSaved={didSave}
-        onPositionSelect={position=>setSelected({position,showProcesses:false})}/>
-
-      {selected && <PositionModal key={selected.position.id} position={selected.position} maps={maps}
-        canEdit={canEditPosts} canEditProcesses={canAssignProcesses}
-        initialProcessEditor={selected.showProcesses} onClose={()=>setSelected(null)} onSaved={didSave}/>}
-    </>}
+    </div>}
   </div>;
 }
