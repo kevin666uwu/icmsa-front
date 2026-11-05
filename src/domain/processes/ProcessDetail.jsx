@@ -4,6 +4,7 @@ import { useRemote, useAction } from '../../hooks/useRemote.js';
 import { ErrorState, LoadingState } from '../../components/feedback/AsyncState.jsx';
 import { read, write } from '../api.js';
 import ProcessAssignments from './ProcessAssignments.jsx';
+import ProcessModules from './ProcessModules.jsx';
 
 function StepsEditor({ initial, onSave, busy }) {
   const [steps, setSteps] = useState(initial.map(({name,description,employee_id,position_id,sort_order}) => ({name,description,employee_id,position_id,sort_order})));
@@ -34,6 +35,7 @@ export default function ProcessDetail({ record, access, onClose }) {
       {canWrite && <button onClick={() => setEditing(v => !v)}>{editing ? 'Cancelar' : 'Editar pasos'}</button>}
     </>}
     {action.error && <ErrorState message={action.error} />}
+    <ProcessModules processId={record.id} canManage={capabilities.data?.manage===true}/>
     {capabilities.data?.manage && <ProcessAssignments processId={record.id} access={access} />}
   </Modal>;
 }

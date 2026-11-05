@@ -3,7 +3,7 @@ import { navigation, hiddenNavigation, hiddenRoute, studentNavigation, visibleNa
 
 describe('reinicio de navegación administrativa ICMSA', () => {
   it('agrupa Organigrama y Personal en Administración respetando permisos', () => {
-    expect(navigation).toHaveLength(6);
+    expect(navigation).toHaveLength(4);
     expect(navigation[1]).toMatchObject({
       path: '/portal/organigrama',
       label: 'Organigrama',
@@ -20,11 +20,13 @@ describe('reinicio de navegación administrativa ICMSA', () => {
     expect(visibleNavigation({ ...access, permissions: [] })).toEqual([]);
   });
 
-  it('agrega los cuatro módulos de Operación después de Administración según permisos', () => {
-    const items = visibleNavigation({role:'super_admin',permissions:['employees.read','organization.read','admissions.read','student_services.read','students.read','finance.read'],resources:{}});
-    expect(items.map(item=>item.label)).toEqual(['Personal','Organigrama','Admisión','Servicio social y prácticas profesionales','Alumnado','Finanzas']);
+  it('muestra Procesos antes de Módulos y deja los módulos individuales fuera del menú', () => {
+    const items = visibleNavigation({role:'super_admin',permissions:['employees.read','organization.read','processes.read','admissions.read','student_services.read','students.read','finance.read'],resources:{}});
+    expect(items.map(item=>item.label)).toEqual(['Personal','Organigrama','Procesos','Módulos']);
     expect(items.slice(2).every(item=>item.group==='Operación')).toBe(true);
-    expect(visibleNavigation({role:'employee',permissions:['students.read'],resources:{}}).map(item=>item.label)).toEqual(['Alumnado']);
+    expect(visibleNavigation({role:'employee',permissions:['students.read'],resources:{}}).map(item=>item.label)).toEqual(['Módulos']);
+    expect(hiddenRoute('/portal/operacion/alumnado',{permissions:['students.read']})?.type).toBe('students');
+    expect(hiddenRoute('/portal/operacion/finanzas',{permissions:['students.read']})).toBeNull();
   });
 
   it('conserva las rutas restantes sin mostrarlas en el menú', () => {

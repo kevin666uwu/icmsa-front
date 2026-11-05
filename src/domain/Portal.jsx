@@ -15,6 +15,9 @@ import AdmissionsPage from './admissions/AdmissionsPage.jsx';
 import StudentPortal from './student/StudentPortal.jsx';
 import OperationsPage from './operations/OperationsPage.jsx';
 import FinancePage from './operations/FinancePage.jsx';
+import ModulesPage from './operations/ModulesPage.jsx';
+import ProcessesPage from './processes/ProcessesPage.jsx';
+import { operationModules } from './operations/modules.js';
 import { Modal } from '../components/ui/Modal.jsx';
 import { SAN_ANGELO_LOGO } from './brand.js';
 const load=signal=>read('/access',signal);
@@ -55,9 +58,12 @@ export default function Portal({ path, session }) {
     || hiddenRoute(path==='/admin'?'/admin/usuarios':path,access)
     || (legacyResource && access.resources[legacyResource] ? {resource:legacyResource}:undefined);
   const groups=[...new Set(items.map(i=>i.group))];
-  const links=groups.map(group=><section key={group}><h2>{group}</h2>{items.filter(i=>i.group===group).map(item=><a key={item.path} href={item.path} aria-current={selected===item?'page':undefined} onClick={event=>{if(event.metaKey||event.ctrlKey||event.shiftKey)return;event.preventDefault();navigate(item.path);setMenu(false);}}>{item.label}</a>)}</section>);
+  const insideModule=operationModules.some(module=>module.path===path);
+  const links=groups.map(group=><section key={group}><h2>{group}</h2>{items.filter(i=>i.group===group).map(item=><a key={item.path} href={item.path} aria-current={selected===item || (insideModule && item.type==='modules')?'page':undefined} onClick={event=>{if(event.metaKey||event.ctrlKey||event.shiftKey)return;event.preventDefault();navigate(item.path);setMenu(false);}}>{item.label}</a>)}</section>);
   let content=<ErrorState message="Esta página no está disponible para tu cuenta."/>;
-  if(selected?.resource)content=<ResourcePage key={selected.resource} name={selected.resource} spec={access.resources[selected.resource]} access={access}/>;
+  if(selected?.type==='processes')content=<ProcessesPage access={access}/>;
+  else if(selected?.type==='modules')content=<ModulesPage access={access}/>;
+  else if(selected?.resource)content=<ResourcePage key={selected.resource} name={selected.resource} spec={access.resources[selected.resource]} access={access}/>;
   else if(selected?.type==='dashboard')content=<Dashboard user={session.user}/>;
   else if(selected?.type==='personnel')content=<PersonnelPage access={access}/>;
   else if(selected?.type==='organization')content=<OrganizationPage access={access}/>;
@@ -71,6 +77,6 @@ export default function Portal({ path, session }) {
   return <div className="workspace"><button className="mobile-menu" aria-expanded={menu} aria-controls="mobile-admin-navigation" aria-haspopup="dialog" onClick={()=>setMenu(v=>!v)}>☰ Menú</button>
     <aside id="sidebar" className="sidebar"><div className="sidebar-brand"><img src={SAN_ANGELO_LOGO} alt="" /><div><b>San Ángelo</b><span>Instituto de Ciencias Médicas</span></div></div>
       <nav aria-label="Módulos institucionales">{links}</nav><div className="sidebar-account"><strong>{session.user.name}</strong><span>{access.role}</span></div>
-    </aside><div className="workspace-content">{content}</div>{menu&&<Modal title="Menú institucional" className="mobile-navigation" onClose={()=>setMenu(false)}><nav id="mobile-admin-navigation" className="mobile-admin-links" aria-label="Módulos institucionales">{links}</nav><p className="mobile-admin-account">{session.user.name} · {access.role}</p></Modal>}</div>;
+    </aside><div className="workspace-content">{insideModule && <a className="module-back-link" href="/portal/operacion/modulos" onClick={event=>{if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();navigate('/portal/operacion/modulos');}}>← Volver a módulos</a>}{content}</div>{menu&&<Modal title="Menú institucional" className="mobile-navigation" onClose={()=>setMenu(false)}><nav id="mobile-admin-navigation" className="mobile-admin-links" aria-label="Módulos institucionales">{links}</nav><p className="mobile-admin-account">{session.user.name} · {access.role}</p></Modal>}</div>;
 }
 

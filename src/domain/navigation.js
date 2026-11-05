@@ -1,3 +1,5 @@
+import { operationModules } from './operations/modules.js';
+
 export const studentNavigation = [
   { path: '/portal', label: 'Inicio', group: 'Mi aula', type: 'student', view: 'overview' },
   { path: '/portal/biblioteca', label: 'Biblioteca digital', group: 'Mi carrera', type: 'student', view: 'library' },
@@ -14,18 +16,17 @@ export const studentNavigation = [
 export const navigation = [
   { path: '/portal/personal', label: 'Personal', group: 'Administración', permission: 'employees.read', type: 'personnel' },
   { path: '/portal/organigrama', label: 'Organigrama', group: 'Administración', permission: 'organization.read', type: 'organization' },
-  { path: '/portal/operacion/admision', label: 'Admisión', group: 'Operación', permission: 'admissions.read', type: 'admissions' },
-  { path: '/portal/operacion/servicio-social', label: 'Servicio social y prácticas profesionales', group: 'Operación', permission: 'student_services.read', type: 'placements' },
-  { path: '/portal/operacion/alumnado', label: 'Alumnado', group: 'Operación', permission: 'students.read', type: 'students' },
-  { path: '/portal/operacion/finanzas', label: 'Finanzas', group: 'Operación', permission: 'finance.read', type: 'finance' },
+  { path: '/portal/operacion/procesos', label: 'Procesos', group: 'Operación', permission: 'processes.read', type: 'processes' },
+  { path: '/portal/operacion/modulos', label: 'Módulos', group: 'Operación', anyPermissions: operationModules.map(module=>module.permission), type: 'modules' },
 ];
 
 export const hiddenNavigation = [
+  ...operationModules.map(module=>({...module,group:'Operación'})),
   { path: '/admin/documentos', label: 'Revisión documental', group: 'Administración', permission: 'documents.read', type: 'documents' },
   { path: '/admin/admision', label: 'Solicitudes de admisión', group: 'Admisión', permission: 'admissions.read', type: 'admissions' },
   { path: '/admin/biblioteca', label: 'Biblioteca digital', group: 'Administración', resource: 'library_resources' },
   { path: '/portal', label: 'Inicio', group: 'Institución', type: 'dashboard' },
-  { path: '/portal/procesos', label: 'Procesos', group: 'Operación', resource: 'processes' },
+  { path: '/portal/procesos', label: 'Procesos', group: 'Operación', resource: 'processes', type:'processes' },
   { path: '/portal/indicadores', label: 'Indicadores', group: 'Operación', resource: 'indicators' },
   { path: '/portal/asistencia', label: 'Asistencia', group: 'Operación', resource: 'attendance_records' },
   { path: '/portal/alumnos', label: 'Alumnos', group: 'Academia', resource: 'students' },
@@ -40,7 +41,7 @@ export const hiddenNavigation = [
 
 export function visibleNavigation(access) {
   if (access.role === 'student') return studentNavigation;
-  return navigation.filter(item => item.resource ? Boolean(access.resources?.[item.resource]) : !item.permission || access.permissions?.includes(item.permission));
+  return navigation.filter(item => item.anyPermissions ? item.anyPermissions.some(permission=>access.permissions?.includes(permission)) : item.resource ? Boolean(access.resources?.[item.resource]) : !item.permission || access.permissions?.includes(item.permission));
 }
 
 
