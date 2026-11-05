@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRemote } from '../hooks/useRemote.js';
 import { LoadingState, ErrorState } from '../components/feedback/AsyncState.jsx';
 import { read } from './api.js';
-import { visibleNavigation, studentNavigation } from './navigation.js';
+import { visibleNavigation, studentNavigation, hiddenRoute } from './navigation.js';
 import { navigate } from '../app/router/navigation.js';
 import Dashboard from './Dashboard.jsx';
 import ResourcePage from './ResourcePage.jsx';
@@ -31,6 +31,13 @@ export default function Portal({ path, session }) {
     window.scrollTo({top:0,left:0,behavior:'auto'});
     document.querySelector('.workspace-content')?.scrollTo({top:0,left:0,behavior:'auto'});
   },[path]);
+  useEffect(()=>{
+    // Al iniciar sesión administrativa, abrir directamente Organigrama.
+    // El portal estudiantil conserva su propia página de inicio.
+    if(path==='/portal' && remote.data?.role!=='student' && remote.data?.permissions?.includes('organization.read')){
+      navigate('/portal/organigrama',{replace:true});
+    }
+  },[path,remote.data]);
   if(remote.loading)return <LoadingState label="Cargando acceso institucional…"/>;
   if(remote.error)return <ErrorState message={remote.error} onRetry={remote.refresh}/>;
   const access=remote.data;
@@ -39,13 +46,14 @@ export default function Portal({ path, session }) {
     return <StudentPortal view={selectedStudent.view} user={session.user} path={path} session={session}/>;
   }
   const items=visibleNavigation(access);
-  const effectivePath=oldOrganizationRoutes.has(path)?'/portal/organigrama':path;
+  const effectivePath=path==='/portal'||oldOrganizationRoutes.has(path)?'/portal/organigrama':path;
   const legacyResource=legacyServiceResources[path];
-  // Existing bookmarks still work without duplicating navigation entries.
-  const selected=items.find(i=>i.path===effectivePath||(effectivePath==='/admin'&&i.type==='users'))
+  // Menú minimalista; enlaces antiguos conservan acceso sujeto a permisos.
+  const selected=items.find(i=>i.path===effectivePath)
+    || hiddenRoute(path==='/admin'?'/admin/usuarios':path,access)
     || (legacyResource && access.resources[legacyResource] ? {resource:legacyResource}:undefined);
   const groups=[...new Set(items.map(i=>i.group))];
-  const links=groups.map(group=><section key={group}><h2>{group}</h2>{items.filter(i=>i.group===group).map(item=><a key={item.path} href={item.path} aria-current={selected===item?'page':undefined} onClick={event=>{if(event.metaKey||event.ctrlKey||event.shiftKey)return;event.preventDefault();navigate(item.path);setMenu(false);}}>{item.label}</a>)}</section>);
+  const links=groups.map(group=><section key={group}>{items.length>1&&<h2>{group}</h2>}{items.filter(i=>i.group===group).map(item=><a key={item.path} href={item.path} aria-current={selected===item?'page':undefined} onClick={event=>{if(event.metaKey||event.ctrlKey||event.shiftKey)return;event.preventDefault();navigate(item.path);setMenu(false);}}>{item.label}</a>)}</section>);
   let content=<ErrorState message="Esta página no está disponible para tu cuenta."/>;
   if(selected?.resource)content=<ResourcePage key={selected.resource} name={selected.resource} spec={access.resources[selected.resource]} access={access}/>;
   else if(selected?.type==='dashboard')content=<Dashboard user={session.user}/>;
