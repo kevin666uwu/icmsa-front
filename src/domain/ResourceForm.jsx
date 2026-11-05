@@ -31,8 +31,8 @@ export default function ResourceForm({ spec, access, record, onClose, onSaved })
     {remote.loading ? <LoadingState /> : remote.error ? <ErrorState message={remote.error} onRetry={remote.refresh} /> :
       <form className="entity-form" onSubmit={submit}>
         {Object.entries(spec.fields).map(([key, field]) => {
-          const props = { id: 'field-' + key, name: key, required: field.required, disabled: action.busy,
-            value: values[key] ?? '', onChange: e => setValues(v => ({ ...v, [key]: field.type === 'boolean' ? e.target.checked : e.target.value })) };
+          const props = { id: 'field-' + key, name: key, required: field.required || (spec.path === '/positions' && key === 'department_id'), disabled: action.busy,
+            value: values[key] ?? '', onChange: e => setValues(v => ({ ...v, ...(key==='department_id' ? {area_id:'',parent_position_id:''} : {}), [key]: field.type === 'boolean' ? e.target.checked : e.target.value })) };
           let input;
           if (field.type === 'boolean') input = <input {...props} type="checkbox" checked={Boolean(values[key])} />;
           else if (field.type === 'textarea') input = <textarea {...props} rows={3} maxLength={12000} />;
@@ -41,8 +41,8 @@ export default function ResourceForm({ spec, access, record, onClose, onSaved })
             let options = remote.data[field.reference] || [];
             if (key === 'subject_id' && values.program_id) options = options.filter(row => row.program_id === Number(values.program_id));
             if (key === 'area_id' && values.department_id) options = options.filter(row => row.department_id === Number(values.department_id));
-            if (key === 'parent_position_id' && record) options = options.filter(row => row.id !== record.id);
-            input = <select {...props}><option value="">Seleccionar…</option>{options.map(row => <option key={row.id} value={row.id}>{displayName(row)} · #{row.id}</option>)}</select>;
+            if (key === 'parent_position_id') options = options.filter(row => (!record || row.id !== record.id) && (!values.department_id || row.department_id === Number(values.department_id) || (!row.department_id && remote.data.areas?.some(a=>a.id===row.area_id && a.department_id===Number(values.department_id)))));
+            input = <select {...props}><option value="">{key === 'area_id' && ['positions','processes'].some(p=>spec.path.endsWith(p)) ? 'Sin área — depende del departamento' : 'Seleccionar…'}</option>{options.map(row => <option key={row.id} value={row.id}>{displayName(row)} · #{row.id}</option>)}</select>;
           } else input = <input {...props} type={['integer', 'reference', 'decimal'].includes(field.type) ? 'number' : field.type === 'datetime' ? 'datetime-local' : field.type === 'email' ? 'email' : field.type === 'date' ? 'date' : 'text'}
             step={field.type === 'decimal' ? '0.0001' : undefined} min={['integer', 'reference'].includes(field.type) ? (field.type === 'reference' ? 1 : 0) : undefined} maxLength={field.max_length || 255} />;
           return <label key={key} htmlFor={props.id}>{field.label}{field.required && <span aria-hidden="true"> *</span>}{input}</label>;
