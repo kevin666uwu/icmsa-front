@@ -4,7 +4,7 @@ import { navigation, hiddenNavigation, hiddenRoute, studentNavigation, visibleNa
 describe('reinicio de navegación administrativa ICMSA', () => {
   it('agrupa Organigrama y Personal en Administración respetando permisos', () => {
     expect(navigation).toHaveLength(2);
-    expect(navigation[0]).toMatchObject({
+    expect(navigation[1]).toMatchObject({
       path: '/portal/organigrama',
       label: 'Organigrama',
       group: 'Administración',
@@ -16,7 +16,7 @@ describe('reinicio de navegación administrativa ICMSA', () => {
       permissions: ['organization.read', 'organization.write', 'employees.read', 'users.read'],
       resources: { processes: { path: '/processes' }, students: { path: '/students' } },
     };
-    expect(visibleNavigation(access).map(item=>item.label)).toEqual(['Organigrama', 'Personal']);
+    expect(visibleNavigation(access).map(item=>item.label)).toEqual(['Personal', 'Organigrama']);
     expect(visibleNavigation({ ...access, permissions: [] })).toEqual([]);
   });
 

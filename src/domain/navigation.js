@@ -12,8 +12,8 @@ export const studentNavigation = [
 
 // Administración concentra la gestión del personal y su estructura.
 export const navigation = [
-  { path: '/portal/organigrama', label: 'Organigrama', group: 'Administración', permission: 'organization.read', type: 'organization' },
   { path: '/portal/personal', label: 'Personal', group: 'Administración', permission: 'employees.read', type: 'personnel' },
+  { path: '/portal/organigrama', label: 'Organigrama', group: 'Administración', permission: 'organization.read', type: 'organization' },
 ];
 
 export const hiddenNavigation = [
