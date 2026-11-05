@@ -112,7 +112,7 @@ export default function OrganizationPage({ access }) {
           <label>Puesto<input required maxLength={255} value={positionName} onChange={e=>setPositionName(e.target.value)} placeholder="Responsable, Analista…"/></label>
           <label>Reporta a<select value={positionParent} onChange={e=>setPositionParent(e.target.value)}>
             <option value="">Nivel superior / raíz</option>
-            {activePositions.filter(p=>maps.positionDepartment(p)===Number(positionDepartment)).map(p=><option key={p.id} value={p.id}>{p.name} · {maps.occupants.get(p.id)?displayName(maps.occupants.get(p.id)):'Vacante'}</option>)}
+            {activePositions.map(p=><option key={p.id} value={p.id}>{p.name} · {maps.occupants.get(p.id)?displayName(maps.occupants.get(p.id)):'Vacante'}</option>)}
           </select></label>
           <button className="button primary" disabled={action.busy}>Crear puesto</button>
         </form>}
