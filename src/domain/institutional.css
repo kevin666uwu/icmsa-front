@@ -336,3 +336,32 @@ fieldset{min-width:0}
 .org-department-delete-confirm{border:1px solid #b43232;background:#b43232;color:white;font-weight:700}
 .org-department-delete-confirm:hover:not(:disabled){background:#902020}
 @media(max-width:600px){.icmsa-kpis-org .org-departments{padding:14px}.icmsa-kpis-org .org-departments-header>.button{width:100%}}
+
+
+/* KPIs Web organigram — faithfully replicated layout, without department UI. */
+.icmsa-kpis-org.organization-page{max-width:1180px;margin:0 auto;display:grid;gap:18px}
+.icmsa-kpis-org .knowledge-hero{background:#fff;border:1px solid #e3e8ef;border-radius:18px;padding:20px}
+.icmsa-kpis-org .knowledge-hero h2{font-size:1.7rem;line-height:1.2;margin:6px 0}
+.icmsa-kpis-org .knowledge-hero p{max-width:720px;color:#64748b;font-size:13px;line-height:1.6}
+.icmsa-kpis-org .org-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.icmsa-kpis-org .org-admin-card{border-radius:18px;box-shadow:none}
+.icmsa-kpis-org .org-admin-card .button,
+.icmsa-kpis-org .org-inline-editor>.button,
+.icmsa-kpis-org .org-process-dnd-actions .button{background:#28366f;color:#fff;border:1px solid #28366f;border-radius:9px;font-weight:800}
+.icmsa-kpis-org .org-admin-card .button:hover,
+.icmsa-kpis-org .org-inline-editor>.button:hover,
+.icmsa-kpis-org .org-process-dnd-actions .button:hover{background:#1b275a}
+.icmsa-kpis-org .org-admin-card .button:disabled,
+.icmsa-kpis-org .org-inline-editor>.button:disabled,
+.icmsa-kpis-org .org-process-dnd-actions .button:disabled{opacity:.6}
+.icmsa-kpis-org .org-chart{min-width:0;overflow:hidden}
+.icmsa-kpis-org .org-tree{overflow-x:auto;scrollbar-gutter:stable;padding-bottom:22px}
+.icmsa-kpis-org .org-admin-card label{display:grid;gap:6px}
+.icmsa-kpis-org .org-existing-units{margin-top:4px}
+.icmsa-kpis-org .form-error{padding:12px 14px;background:#fff3f2;border:1px solid #f3ceca;border-radius:10px;color:#962b2b;font-size:13px}
+.icmsa-kpis-org .dashboard-state{min-height:180px}
+@media(max-width:760px){
+  .icmsa-kpis-org .org-admin-grid{grid-template-columns:1fr}
+  .icmsa-kpis-org .knowledge-hero,.icmsa-kpis-org .org-admin-card,.icmsa-kpis-org .org-chart{padding:16px}
+  .icmsa-kpis-org .org-tree{justify-content:flex-start}
+}
