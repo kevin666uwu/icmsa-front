@@ -3,12 +3,27 @@ export function organizationMaps(data) {
   const employees = new Map(data.employees.map(e => [e.id, e]));
   const areas = new Map(data.areas.map(a => [a.id, a]));
   const departments = new Map(data.departments.map(d => [d.id, d]));
-  const occupants = new Map(data.memberships.filter(m => m.active && m.is_primary).map(m => [m.position_id, employees.get(m.employee_id)]));
+  const occupants = new Map(data.memberships.filter(m => m.active && m.is_primary)
+    .map(m => [m.position_id, employees.get(m.employee_id)]));
   const children = new Map();
+  const roots = new Map();
+  const positionDepartment = position => position.department_id ?? areas.get(position.area_id)?.department_id ?? null;
   for (const position of data.positions) {
-    const parent = positions.has(position.parent_position_id) ? position.parent_position_id : null;
-    if (!children.has(parent)) children.set(parent, []);
-    children.get(parent).push(position);
+    const parent = positions.get(position.parent_position_id);
+    // The chart depicts people and reporting lines, not functional areas.
+    // An orphaned or cross-department parent is shown as a department root.
+    if (!parent || positionDepartment(parent) !== positionDepartment(position)) {
+      const department = positionDepartment(position);
+      if (!roots.has(department)) roots.set(department, []);
+      roots.get(department).push(position);
+    } else {
+      if (!children.has(parent.id)) children.set(parent.id, []);
+      children.get(parent.id).push(position);
+    }
   }
-  return { positions, employees, areas, departments, occupants, children, overview: data.process_overview };
+  const byOrder = (a,b) => (a.sort_order ?? 0)-(b.sort_order ?? 0) || a.name.localeCompare(b.name, 'es');
+  for (const list of [...roots.values(), ...children.values()]) list.sort(byOrder);
+  const overview = data.process_overview || {};
+  const processes = data.processes || [];
+  return {positions, employees, areas, departments, occupants, roots, children, overview, processes, positionDepartment};
 }
