@@ -51,3 +51,9 @@ A petición del responsable del proyecto, el **menú administrativo** muestra ú
 Todos los demás módulos permanecen implementados, pero sus entradas laterales están temporalmente ocultas. Sus rutas protegidas siguen resolviéndose si el usuario cuenta con la autorización correspondiente; no se modificaron tablas ni se borraron expedientes. El menú del alumnado no cambió.
 
 La definición del menú visible está en `src/domain/navigation.js`; las rutas antiguas están en `hiddenNavigation`. Para reintroducir funciones más adelante, mover las entradas autorizadas del catálogo oculto al visible, sin reimplementar pantallas ni endpoints.
+
+## Gestión visible de departamentos en Organigrama
+
+En `/portal/organigrama` se muestra en primer plano la sección **Departamentos**, sin desplegables ocultos y sin agregar una nueva entrada al menú. Cada departamento muestra su nombre, estado y conteos de áreas, puestos y procesos visibles. Para `super_admin` ofrece **Agregar departamento**, **Editar** y **Eliminar** usando los campos del catálogo institucional. El resto de catálogos permanece dentro del desplegable de gestión organizacional. Al guardar se actualiza el organigrama.
+
+La eliminación exige escribir el nombre exacto del departamento. Si existen registros asociados, la API devuelve conflicto (409) y mantiene el departamento; la interfaz ofrece **Desactivar en su lugar**. Esto evita que una simplificación del menú borre información de la escuela.
