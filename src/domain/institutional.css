@@ -152,3 +152,18 @@ fieldset{min-width:0}
 .user-delete-notice p{margin:.25rem 0 .6rem}
 .user-delete-danger{background:#ad2929;color:#fff;border-color:#ad2929}
 .user-delete-danger:hover:not(:disabled){background:#8a1f1f}
+
+/* Organigrama institucional: jerarquía por departamento; áreas como funciones opcionales */
+.department-org-chart{display:grid;gap:1.25rem}
+.department-org-unit{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:1.25rem;min-width:0}
+.department-org-heading{display:flex;align-items:start;justify-content:space-between;gap:1rem;margin-bottom:1rem}
+.department-org-heading h2{margin:.3rem 0;font-size:1.15rem}
+.department-org-heading p{color:var(--muted);margin:.25rem 0;line-height:1.5}
+.department-org-heading>span{color:var(--muted);font-size:.75rem;white-space:nowrap}
+.department-org-unit .org-canvas{border:0;background:transparent;padding:.4rem 0;overflow-x:auto}
+.department-org-unit .org-tree{padding-bottom:.3rem}
+.department-processes{border-top:1px solid var(--line);margin-top:1rem;padding-top:.8rem}
+.department-processes h3{font-size:.92rem;margin:.3rem 0}
+.department-processes ul{display:flex;gap:.4rem;flex-wrap:wrap;list-style:none;padding:0;margin:.6rem 0 0}
+.department-processes li{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:.4rem .7rem;font-size:.78rem}
+@media(max-width:640px){.department-org-heading{display:block}.department-org-heading>span{display:inline-block;margin-top:.6rem}}
