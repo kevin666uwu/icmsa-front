@@ -10,9 +10,9 @@ export function organizationMaps(data) {
   const positionDepartment = position => position.department_id ?? areas.get(position.area_id)?.department_id ?? null;
   for (const position of data.positions) {
     const parent = positions.get(position.parent_position_id);
-    // The chart depicts people and reporting lines, not functional areas.
-    // An orphaned or cross-department parent is shown as a department root.
-    if (!parent || positionDepartment(parent) !== positionDepartment(position)) {
+    // Reporting lines are independent from functional areas or departments,
+    // as in KPIs Web. A director can supervise leaders in several departments.
+    if (!parent) {
       const department = positionDepartment(position);
       if (!roots.has(department)) roots.set(department, []);
       roots.get(department).push(position);
