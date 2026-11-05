@@ -6,6 +6,7 @@ import PositionTree from './PositionTree.jsx';
 import PositionModal from './PositionModal.jsx';
 import { organizationMaps } from './organizationMaps.js';
 import OrgDirectory from './OrgDirectory.jsx';
+import DepartmentManager from './DepartmentManager.jsx';
 
 const loadOrganization=signal=>read('/organization',signal);
 const initialStaff={first_name:'',last_name:'',employee_number:''};
@@ -77,6 +78,8 @@ export default function OrganizationPage({ access }) {
     {remote.error && <ErrorState message={remote.error} onRetry={remote.refresh}/>}
 
     {maps && <>
+      <DepartmentManager maps={maps} access={access} onSaved={didSave}/>
+
       {(canManage||canCreateStaff||canEditPosts) && <section className="org-admin-grid" aria-label="Administración de estructura organizacional">
         {canCreateStaff && <form className="org-admin-card" onSubmit={createEmployee}>
           <h3>Agregar personal</h3>
