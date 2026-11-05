@@ -46,7 +46,7 @@ export default function Portal({ path, session }) {
     return <StudentPortal view={selectedStudent.view} user={session.user} path={path} session={session}/>;
   }
   const items=visibleNavigation(access);
-  const effectivePath=path==='/portal'||oldOrganizationRoutes.has(path)?'/portal/organigrama':path;
+  const effectivePath=(path==='/portal' && access.permissions?.includes('organization.read'))||oldOrganizationRoutes.has(path)?'/portal/organigrama':path;
   const legacyResource=legacyServiceResources[path];
   // Menú minimalista; enlaces antiguos conservan acceso sujeto a permisos.
   const selected=items.find(i=>i.path===effectivePath)
