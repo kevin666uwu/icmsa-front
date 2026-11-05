@@ -257,6 +257,7 @@ fieldset{min-width:0}
 .org-existing-units>div{display:flex;flex-wrap:wrap;gap:6px;max-height:76px;overflow:auto}
 .org-existing-units span{display:inline-flex;align-items:center;min-height:28px;padding:5px 9px;border-radius:999px;background:#f1f4f9;color:#465166;font-size:10px;font-weight:800;border:1px solid #e2e8f0}
 .org-existing-units em{font-size:11px;color:#94a3b8;font-style:normal}
+.org-existing-units .org-unit-edit{width:auto;min-height:28px;margin-left:8px;padding:3px 7px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;color:#293568;font-size:11px;font-weight:700;cursor:pointer}
 
 /* Per-person process editing control in organization cards. */
 .org-node-card{padding:0;overflow:hidden}

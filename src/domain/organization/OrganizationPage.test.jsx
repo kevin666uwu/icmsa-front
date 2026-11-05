@@ -55,6 +55,33 @@ describe('Organigrama ICMSA — réplica KPIs Web', () => {
     expect(screen.queryByRole('heading',{name:'Agregar usuario'})).toBeNull();
     expect(screen.getByText('Control Escolar')).toBeTruthy();
   });
+  it('edita un área en una ventana, conserva cambios si falla y actualiza la lista al guardar', async () => {
+    const units = [...originalData.units,
+      {id:12,name:'Titulación',parent_id:11,active:true},
+      {id:13,name:'Dirección',parent_id:null,active:true}];
+    const updated = {...originalData, units: units.map(unit => unit.id === 11 ? {...unit,name:'Control Académico',parent_id:13} : unit)};
+    apiFetch.mockResolvedValueOnce({...originalData,units})
+      .mockRejectedValueOnce(new Error('No se pudo guardar'))
+      .mockResolvedValueOnce({}).mockResolvedValue(updated);
+    render(<OrganizationPage access={{role:'super_admin'}} />);
+    fireEvent.click(await screen.findByRole('button',{name:'Editar área Control Escolar'}));
+    const modal = screen.getByRole('dialog',{name:'Editar área'});
+    expect(within(modal).getByLabelText('Nombre del área')).toHaveValue('Control Escolar');
+    const parent = within(modal).getByLabelText('Área superior');
+    expect(within(parent).queryByRole('option',{name:'Control Escolar'})).toBeNull();
+    expect(within(parent).queryByRole('option',{name:'Titulación'})).toBeNull();
+    fireEvent.change(within(modal).getByLabelText('Nombre del área'),{target:{value:'Control Académico'}});
+    fireEvent.change(parent,{target:{value:'13'}});
+    fireEvent.click(within(modal).getByRole('button',{name:'Guardar cambios'}));
+    expect(await within(modal).findByRole('alert')).toHaveTextContent('No se pudo guardar');
+    expect(within(modal).getByLabelText('Nombre del área')).toHaveValue('Control Académico');
+    fireEvent.click(within(modal).getByRole('button',{name:'Guardar cambios'}));
+    await waitFor(()=>expect(apiFetch).toHaveBeenCalledWith('/api/v1/areas/11',{
+      method:'PATCH',body:JSON.stringify({name:'Control Académico',parent_area_id:13})
+    }));
+    expect(await screen.findByRole('button',{name:'Editar área Control Académico'})).toBeTruthy();
+    expect(screen.queryByRole('dialog',{name:'Editar área'})).toBeNull();
+  });
   it('mueve a la persona de pendiente a su área después de asignarla', async () => {
     const assigned = { ...originalData, memberships: [{user_id:2,position_id:9}] };
     apiFetch.mockResolvedValueOnce(originalData).mockResolvedValueOnce({status:'assigned'}).mockResolvedValue(assigned);

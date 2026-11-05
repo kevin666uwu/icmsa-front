@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../../services/api.js";
 import { allRecords, displayName } from "../api.js";
+import { Modal } from "../../components/ui/Modal.jsx";
 
 const EMPTY_PROCESS_OVERVIEW = { responsible: [], related: [] };
 
@@ -12,6 +13,9 @@ export default function OrganizationPage({ access }) {
   const [loading, setLoading] = useState(true);
   const [unitName, setUnitName] = useState("");
   const [parentId, setParentId] = useState("");
+  const [editingUnit, setEditingUnit] = useState(null);
+  const [unitError, setUnitError] = useState("");
+  const [savingUnit, setSavingUnit] = useState(false);
   const [positionName, setPositionName] = useState("");
   const [positionUnitId, setPositionUnitId] = useState("");
   const [parentPositionId, setParentPositionId] = useState("");
@@ -99,6 +103,36 @@ export default function OrganizationPage({ access }) {
       setPositionName(""); setPositionUnitId(""); setParentPositionId("");
       setNotice("Puesto creado."); await load();
     } catch (e) { setError(e.message); }
+  }
+
+  function openUnitEditor(unit) {
+    setEditingUnit({ ...unit, parent_id: unit.parent_id ? String(unit.parent_id) : "" });
+    setUnitError("");
+  }
+
+  function canBeUnitParent(unit) {
+    const visited = new Set();
+    let current = unit;
+    while (current) {
+      if (current.id === editingUnit?.id || visited.has(current.id)) return false;
+      visited.add(current.id);
+      current = unitById.get(current.parent_id);
+    }
+    return unit.active;
+  }
+
+  async function saveUnit(e) {
+    e.preventDefault();
+    if (savingUnit) return;
+    setSavingUnit(true); setUnitError("");
+    try {
+      await apiFetch("/api/v1/areas/" + editingUnit.id, {
+        method: "PATCH",
+        body: JSON.stringify({ name: editingUnit.name.trim(), parent_area_id: editingUnit.parent_id ? Number(editingUnit.parent_id) : null }),
+      });
+      setEditingUnit(null); setNotice("Área actualizada."); await load();
+    } catch (e) { setUnitError(e.message || "No fue posible actualizar el área."); }
+    finally { setSavingUnit(false); }
   }
 
   async function assignPosition(e) {
@@ -282,7 +316,7 @@ export default function OrganizationPage({ access }) {
         <div className="org-existing-units">
           <small>Áreas existentes</small>
           <div>{(data.units || []).filter(item => item.active).length
-            ? (data.units || []).filter(item => item.active).map(item => <span key={item.id}>{item.name}</span>)
+            ? (data.units || []).filter(item => item.active).map(item => <span key={item.id}>{item.name}<button type="button" className="org-unit-edit" aria-label={"Editar área " + item.name} onClick={() => openUnitEditor(item)}>Editar</button></span>)
             : <em>Aún no hay áreas creadas.</em>}</div>
         </div>
         <button className="button">Crear área</button>
@@ -319,6 +353,18 @@ export default function OrganizationPage({ access }) {
           : <div className="empty-card">Aún no hay puestos de nivel raíz. {isAdmin ? "Define la jerarquía desde Agregar puesto." : ""}</div>}
       </div>
     </section>
+
+    {editingUnit && <Modal title="Editar área" className="resource-dialog" onClose={() => { if (!savingUnit) setEditingUnit(null); }}>
+      <form className="entity-form" onSubmit={saveUnit}>
+        <label><span>Nombre del área</span><input autoFocus required maxLength={255} value={editingUnit.name} disabled={savingUnit} onChange={e => setEditingUnit(unit => ({ ...unit, name: e.target.value }))} /></label>
+        <label><span>Área superior</span><select value={editingUnit.parent_id} disabled={savingUnit} onChange={e => setEditingUnit(unit => ({ ...unit, parent_id: e.target.value }))}>
+          <option value="">Sin área superior</option>
+          {(data.units || []).filter(canBeUnitParent).map(unit => <option key={unit.id} value={unit.id}>{unit.name}</option>)}
+        </select></label>
+        {unitError && <p className="error" role="alert">{unitError}</p>}
+        <div className="form-actions"><button type="submit" className="button primary" disabled={savingUnit}>{savingUnit ? "Guardando…" : "Guardar cambios"}</button><button type="button" className="button secondary" disabled={savingUnit} onClick={() => setEditingUnit(null)}>Cancelar</button></div>
+      </form>
+    </Modal>}
 
     {openPosition && <div className="org-modal-backdrop" role="presentation" onMouseDown={() => setOpenPosition(null)}>
       <section className="org-modal" role="dialog" aria-modal="true" aria-label="Procesos del puesto" onMouseDown={event => event.stopPropagation()}>
