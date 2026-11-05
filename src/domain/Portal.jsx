@@ -18,6 +18,7 @@ import FinancePage from './operations/FinancePage.jsx';
 import ModulesPage from './operations/ModulesPage.jsx';
 import ProcessesPage from './processes/ProcessesPage.jsx';
 import { operationModules } from './operations/modules.js';
+import { RetentionPage, SchoolIndicatorsPage } from './operations/SchoolReports.jsx';
 import { Modal } from '../components/ui/Modal.jsx';
 import { SAN_ANGELO_LOGO } from './brand.js';
 const load=signal=>read('/access',signal);
@@ -72,6 +73,8 @@ export default function Portal({ path, session }) {
   else if(selected?.type==='admissions')content=<AdmissionsPage defaultPending={selected.group==='Operación'} canWrite={access.permissions.includes('admissions.write')}/>;
   else if(['placements','students'].includes(selected?.type))content=<OperationsPage key={selected.type} type={selected.type} access={access}/>;
   else if(selected?.type==='finance')content=<FinancePage access={access}/>;
+  else if(selected?.type==='retention')content=<RetentionPage/>;
+  else if(selected?.type==='school_indicators')content=<SchoolIndicatorsPage/>;
   else if(selected?.type==='users')content=<UsersPage user={session.user}/>;
   else if(selected?.type==='roles'||selected?.type==='settings')content=<AdminInfo key={selected.type} type={selected.type}/>;
   return <div className="workspace"><button className="mobile-menu" aria-expanded={menu} aria-controls="mobile-admin-navigation" aria-haspopup="dialog" onClick={()=>setMenu(v=>!v)}>☰ Menú</button>
