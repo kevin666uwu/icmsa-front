@@ -42,3 +42,12 @@ Servicios Escolares y Servicios Estudiantiles son departamentos institucionales,
 Los enlaces guardados a rutas de organización antiguas abren ahora Organigrama. Indicadores, asistencia, academia, admisión, biblioteca y administración conservan sus entradas y permisos independientes.
 
 **No se modificó el esquema de base de datos para esta simplificación de navegación.** Sigue siendo necesario desplegar y migrar el backend 0.4 para utilizar puestos sin área. No confundir un despliegue correcto de Vercel con pruebas completas de API/BD.
+
+
+## Modo de reinicio visual: solo Organigrama en el menú (noviembre 2026)
+
+A petición del responsable del proyecto, el **menú administrativo** muestra únicamente `Organigrama` en `/portal/organigrama`. El acceso por defecto `/portal` redirige allí cuando la cuenta tiene permiso `organization.read`. Si la cuenta no cuenta con dicho permiso, su ruta inicial original sigue disponible para no bloquear el acceso.
+
+Todos los demás módulos permanecen implementados, pero sus entradas laterales están temporalmente ocultas. Sus rutas protegidas siguen resolviéndose si el usuario cuenta con la autorización correspondiente; no se modificaron tablas ni se borraron expedientes. El menú del alumnado no cambió.
+
+La definición del menú visible está en `src/domain/navigation.js`; las rutas antiguas están en `hiddenNavigation`. Para reintroducir funciones más adelante, mover las entradas autorizadas del catálogo oculto al visible, sin reimplementar pantallas ni endpoints.
