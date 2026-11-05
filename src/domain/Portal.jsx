@@ -8,6 +8,7 @@ import { navigate } from '../app/router/navigation.js';
 import Dashboard from './Dashboard.jsx';
 import ResourcePage from './ResourcePage.jsx';
 import OrganizationPage from './organization/OrganizationPage.jsx';
+import PersonnelPage from './organization/PersonnelPage.jsx';
 import UsersPage from './admin/UsersPage.jsx';
 import AdminInfo from './admin/AdminInfo.jsx';
 import AdmissionsPage from './admissions/AdmissionsPage.jsx';
@@ -16,7 +17,6 @@ import { Modal } from '../components/ui/Modal.jsx';
 import { SAN_ANGELO_LOGO } from './brand.js';
 const load=signal=>read('/access',signal);
 const oldOrganizationRoutes=new Set([
-  '/portal/personal',
   '/portal/organizacion/departamentos',
   '/portal/organizacion/areas',
   '/portal/organizacion/puestos',
@@ -53,10 +53,11 @@ export default function Portal({ path, session }) {
     || hiddenRoute(path==='/admin'?'/admin/usuarios':path,access)
     || (legacyResource && access.resources[legacyResource] ? {resource:legacyResource}:undefined);
   const groups=[...new Set(items.map(i=>i.group))];
-  const links=groups.map(group=><section key={group}>{items.length>1&&<h2>{group}</h2>}{items.filter(i=>i.group===group).map(item=><a key={item.path} href={item.path} aria-current={selected===item?'page':undefined} onClick={event=>{if(event.metaKey||event.ctrlKey||event.shiftKey)return;event.preventDefault();navigate(item.path);setMenu(false);}}>{item.label}</a>)}</section>);
+  const links=groups.map(group=><section key={group}><h2>{group}</h2>{items.filter(i=>i.group===group).map(item=><a key={item.path} href={item.path} aria-current={selected===item?'page':undefined} onClick={event=>{if(event.metaKey||event.ctrlKey||event.shiftKey)return;event.preventDefault();navigate(item.path);setMenu(false);}}>{item.label}</a>)}</section>);
   let content=<ErrorState message="Esta página no está disponible para tu cuenta."/>;
   if(selected?.resource)content=<ResourcePage key={selected.resource} name={selected.resource} spec={access.resources[selected.resource]} access={access}/>;
   else if(selected?.type==='dashboard')content=<Dashboard user={session.user}/>;
+  else if(selected?.type==='personnel')content=<PersonnelPage access={access}/>;
   else if(selected?.type==='organization')content=<OrganizationPage access={access}/>;
   else if(selected?.type==='student')content=<StudentPortal view={selected.view} user={session.user}/>;
   else if(selected?.type==='documents')content=<Documents admin/>;

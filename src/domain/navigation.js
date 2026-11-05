@@ -10,11 +10,10 @@ export const studentNavigation = [
   { path: '/portal/documentos', label: 'Documentos', group: 'Servicios', type: 'student', view: 'documents' },
 ];
 
-// Primera etapa: el menú administrativo contiene una sola entrada.
-// Mantener los módulos anteriores como rutas ocultas evita borrar trabajo,
-// y permite reactivarlos después sin alterar su información.
+// Administración concentra la gestión del personal y su estructura.
 export const navigation = [
-  { path: '/portal/organigrama', label: 'Organigrama', group: 'Organización', permission: 'organization.read', type: 'organization' },
+  { path: '/portal/organigrama', label: 'Organigrama', group: 'Administración', permission: 'organization.read', type: 'organization' },
+  { path: '/portal/personal', label: 'Personal', group: 'Administración', permission: 'employees.read', type: 'personnel' },
 ];
 
 export const hiddenNavigation = [

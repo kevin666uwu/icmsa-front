@@ -36,7 +36,7 @@ export default function ResourceForm({ spec, access, record, onClose, onSaved })
           let input;
           if (field.type === 'boolean') input = <input {...props} type="checkbox" checked={Boolean(values[key])} />;
           else if (field.type === 'textarea') input = <textarea {...props} rows={3} maxLength={12000} />;
-          else if (field.choices) input = <select {...props}>{field.choices.map(value => <option key={value} value={value}>{value}</option>)}</select>;
+          else if (field.choices) input = <select {...props}>{field.choices.map(value => <option key={value} value={value}>{field.choice_labels?.[value] || value}</option>)}</select>;
           else if (field.reference && field.reference !== 'users') {
             let options = remote.data[field.reference] || [];
             if (key === 'subject_id' && values.program_id) options = options.filter(row => row.program_id === Number(values.program_id));

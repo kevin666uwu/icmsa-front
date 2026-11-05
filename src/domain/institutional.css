@@ -365,3 +365,16 @@ fieldset{min-width:0}
   .icmsa-kpis-org .knowledge-hero,.icmsa-kpis-org .org-admin-card,.icmsa-kpis-org .org-chart{padding:16px}
   .icmsa-kpis-org .org-tree{justify-content:flex-start}
 }
+
+.personnel-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px}
+.personnel-tabs button{padding:10px 18px;border:1px solid #d9e0ea;border-radius:10px;background:#fff;color:#293568;font-weight:700;cursor:pointer}
+.personnel-tabs button[aria-selected=true]{background:#293568;color:#fff}
+.org-staff-list{max-height:340px;overflow:auto;display:grid;gap:14px}
+.org-staff-list h4{margin:0 0 8px;font-size:14px}
+.org-staff-list h4 span{font-weight:400;color:#667085}
+.org-staff-person{display:grid;gap:4px;text-align:left;width:100%;background:#f8fafc;border:1px solid #e3e8ef;border-radius:10px;padding:10px 12px;margin-bottom:6px;cursor:pointer;color:#25304b}
+.org-staff-person small{color:#667085}
+.org-staff-person.selected{border-color:#293568;background:#eef1fc}
+.org-staff-person:disabled{opacity:.6;cursor:default}
+.org-staff-card>p{margin:0;font-size:13px;line-height:1.5}
+.org-staff-person:focus-visible,.personnel-tabs button:focus-visible{outline:3px solid #8195dd;outline-offset:2px}

@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../../services/api.js";
+import { allRecords, displayName } from "../api.js";
 
-const emptyUser = { name: "", email: "", password: "", role: "member", status: "active" };
 const EMPTY_PROCESS_OVERVIEW = { responsible: [], related: [] };
 
 export default function OrganizationPage({ access }) {
@@ -15,7 +15,7 @@ export default function OrganizationPage({ access }) {
   const [positionName, setPositionName] = useState("");
   const [positionUnitId, setPositionUnitId] = useState("");
   const [parentPositionId, setParentPositionId] = useState("");
-  const [userForm, setUserForm] = useState(emptyUser);
+  const [staffQuery, setStaffQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedPosition, setSelectedPosition] = useState("");
   const [openPosition, setOpenPosition] = useState(null);
@@ -25,20 +25,29 @@ export default function OrganizationPage({ access }) {
   const [savingProcesses, setSavingProcesses] = useState(false);
   const [openProcessesImmediately, setOpenProcessesImmediately] = useState(false);
 
-  async function load() {
+  const staffPath = access?.resources?.employees?.path;
+  const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      const response = await apiFetch("/api/v1/organization/kpis");
-      setData(response);
+      const [response, staff] = await Promise.all([
+        apiFetch("/api/v1/organization/kpis"),
+        staffPath ? allRecords(staffPath) : Promise.resolve(null),
+      ]);
+      // El expediente de Personal es la fuente del nombre, incluso si tiene cuenta.
+      const staffById = new Map((staff || []).map(person => [person.id, person]));
+      setData({ ...response, users: (response.users || []).map(person => {
+        const employee = staffById.get(person.id);
+        return employee ? { ...person, name: displayName(employee), email: employee.email, status: employee.status } : person;
+      }) });
     } catch (e) {
       setError(e.message || "No fue posible cargar el organigrama.");
     } finally {
       setLoading(false);
     }
-  }
+  }, [staffPath]);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const occupantByPosition = useMemo(() => {
     const map = new Map();
@@ -51,6 +60,11 @@ export default function OrganizationPage({ access }) {
 
   const unitById = useMemo(() => new Map((data.units || []).map(unit => [unit.id, unit])), [data.units]);
   const activePositions = useMemo(() => (data.positions || []).filter(position => position.active), [data.positions]);
+  const staffRows = (data.users || []).map(person => {
+    const membership = (data.memberships || []).find(item => item.user_id === person.id && activePositions.some(position => position.id === item.position_id));
+    const position = activePositions.find(item => item.id === membership?.position_id);
+    return { ...person, area: unitById.get(position?.org_unit_id)?.name || null };
+  }).filter(person => [person.name, person.email].filter(Boolean).join(" ").toLocaleLowerCase().includes(staffQuery.trim().toLocaleLowerCase()));
   const positionChildren = parentIdValue => activePositions.filter(position =>
     (position.parent_position_id || null) === (parentIdValue || null)
   );
@@ -84,14 +98,6 @@ export default function OrganizationPage({ access }) {
       });
       setPositionName(""); setPositionUnitId(""); setParentPositionId("");
       setNotice("Puesto creado."); await load();
-    } catch (e) { setError(e.message); }
-  }
-
-  async function createUser(e) {
-    e.preventDefault(); setError(""); setNotice("");
-    try {
-      await apiFetch("/api/v1/organization/users", { method: "POST", body: JSON.stringify(userForm) });
-      setUserForm(emptyUser); setNotice("Usuario creado."); await load();
     } catch (e) { setError(e.message); }
   }
 
@@ -244,7 +250,7 @@ export default function OrganizationPage({ access }) {
       <span className="portal-kicker">GOBIERNO DE PROCESOS</span>
       <h2>Organigrama</h2>
       <p>{isAdmin
-        ? "Administra usuarios, áreas, puestos y asignaciones desde una sola pantalla, como en KPIs Web."
+        ? "Asigna el personal a las áreas y organiza sus puestos y superiores."
         : "Consulta el organigrama y los procesos asociados a cada puesto."}</p>
     </header>
 
@@ -252,13 +258,23 @@ export default function OrganizationPage({ access }) {
     {notice && <p className="org-notice" role="status">{notice}</p>}
 
     {isAdmin && <section className="org-admin-grid">
-      <form className="org-admin-card" onSubmit={createUser}><h3>Agregar usuario</h3>
-        <label>Nombre<input required value={userForm.name} onChange={e => setUserForm(value => ({ ...value, name: e.target.value }))} /></label>
-        <label>Correo<input required type="email" value={userForm.email} onChange={e => setUserForm(value => ({ ...value, email: e.target.value }))} /></label>
-        <label>Contraseña temporal<input required minLength={12} type="password" value={userForm.password} onChange={e => setUserForm(value => ({ ...value, password: e.target.value }))} /></label>
-        <label>Rol<select value={userForm.role} onChange={e => setUserForm(value => ({ ...value, role: e.target.value }))}><option value="member">Miembro</option><option value="admin">Administrador (acceso total)</option></select></label>
-        <button className="button">Crear usuario</button>
-      </form>
+      <section className="org-admin-card org-staff-card" aria-label="Personal del organigrama">
+        <h3>Personal</h3>
+        <p className="muted">Registra y actualiza sus datos en Administración → Personal. Selecciona una persona para asignarle un puesto.</p>
+        <label>Buscar personal<input value={staffQuery} onChange={event => setStaffQuery(event.target.value)} placeholder="Nombre o correo…" /></label>
+        <div className="org-staff-list">
+          {[["pending", "Pendiente"], ["assigned", "Con área asignada"]].map(([group, title]) => {
+            const people = staffRows.filter(person => Boolean(person.area) === (group === "assigned"));
+            return <section key={group} aria-label={title}><h4>{title} <span>{people.length}</span></h4>
+              {people.length ? people.map(person => <button type="button" key={person.id}
+                className={"org-staff-person" + (String(person.id) === selectedUser ? " selected" : "")}
+                disabled={person.status !== "active"} onClick={() => setSelectedUser(String(person.id))}>
+                <strong>{person.name}</strong><small>{person.area || "Sin área asignada"}{person.status !== "active" ? " · Inactivo" : ""}</small>
+              </button>) : <p className="muted">{staffQuery ? "Sin coincidencias." : group === "pending" ? "No hay personal pendiente." : "Aún no hay personal con área asignada."}</p>}
+            </section>;
+          })}
+        </div>
+      </section>
 
       <form className="org-admin-card org-area-card" onSubmit={createUnit}><h3>Agregar área</h3>
         <label>Nombre<input required value={unitName} onChange={e => setUnitName(e.target.value)} /></label>
@@ -280,7 +296,7 @@ export default function OrganizationPage({ access }) {
       </form>
 
       <form className="org-admin-card" onSubmit={assignPosition}><h3>Asignar persona</h3>
-        <label>Usuario<select required value={selectedUser} onChange={e => setSelectedUser(e.target.value)}><option value="">Seleccionar usuario</option>{(data.users || []).filter(item => item.status === "active").map(item => <option key={item.id} value={item.id}>{item.name}{item.email ? " · " + item.email : ""}</option>)}</select></label>
+        <label>Personal<select required value={selectedUser} onChange={e => setSelectedUser(e.target.value)}><option value="">Seleccionar persona</option>{(data.users || []).filter(item => item.status === "active").map(item => <option key={item.id} value={item.id}>{item.name}{item.email ? " · " + item.email : ""}</option>)}</select></label>
         <label>Puesto<select required value={selectedPosition} onChange={e => setSelectedPosition(e.target.value)}><option value="">Seleccionar puesto</option>{activePositions.map(item => {
           const occupant = occupantByPosition.get(item.id);
           const isCurrentUser = occupant && String(occupant.id) === String(selectedUser);

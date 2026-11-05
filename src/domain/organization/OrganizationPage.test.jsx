@@ -20,9 +20,11 @@ beforeEach(() => {
 });
 
 describe('Organigrama ICMSA — réplica KPIs Web', () => {
-  it('muestra los cuatro formularios y no muestra departamentos', async () => {
+  it('muestra personal pendiente y las herramientas de estructura', async () => {
     render(<OrganizationPage access={{role:'super_admin'}} />);
-    expect(await screen.findByRole('heading',{name:'Agregar usuario'})).toBeTruthy();
+    expect(await screen.findByRole('heading',{name:'Personal'})).toBeTruthy();
+    expect(screen.queryByRole('heading',{name:'Agregar usuario'})).toBeNull();
+    expect(within(screen.getByRole('region',{name:'Pendiente'})).getByText('Andrea Demo')).toBeTruthy();
     expect(screen.getByRole('heading',{name:'Agregar área'})).toBeTruthy();
     expect(screen.getByRole('heading',{name:'Agregar puesto'})).toBeTruthy();
     expect(screen.getByRole('heading',{name:'Asignar persona'})).toBeTruthy();
@@ -53,4 +55,21 @@ describe('Organigrama ICMSA — réplica KPIs Web', () => {
     expect(screen.queryByRole('heading',{name:'Agregar usuario'})).toBeNull();
     expect(screen.getByText('Control Escolar')).toBeTruthy();
   });
+  it('mueve a la persona de pendiente a su área después de asignarla', async () => {
+    const assigned = { ...originalData, memberships: [{user_id:2,position_id:9}] };
+    apiFetch.mockResolvedValueOnce(originalData).mockResolvedValueOnce({status:'assigned'}).mockResolvedValue(assigned);
+    render(<OrganizationPage access={{role:'super_admin'}} />);
+    const pending = await screen.findByRole('region',{name:'Pendiente'});
+    fireEvent.click(within(pending).getByRole('button',{name:/Andrea Demo/}));
+    const form = screen.getByRole('heading',{name:'Asignar persona'}).closest('form');
+    fireEvent.change(within(form).getByLabelText('Puesto'),{target:{value:'9'}});
+    fireEvent.click(within(form).getByRole('button',{name:'Asignar puesto'}));
+    await waitFor(()=>expect(apiFetch).toHaveBeenCalledWith('/api/v1/organization/users/2/position',{
+      method:'PUT',body:JSON.stringify({position_id:9})
+    }));
+    await waitFor(()=>expect(within(screen.getByRole('region',{name:'Con área asignada'})).getByText('Andrea Demo')).toBeTruthy());
+    expect(within(screen.getByRole('region',{name:'Con área asignada'})).getByText('Control Escolar')).toBeTruthy();
+    expect(within(screen.getByRole('region',{name:'Pendiente'})).queryByText('Andrea Demo')).toBeNull();
+  });
+
 });

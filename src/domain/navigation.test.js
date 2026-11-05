@@ -2,21 +2,21 @@ import { describe, expect, it } from 'vitest';
 import { navigation, hiddenNavigation, hiddenRoute, studentNavigation, visibleNavigation } from './navigation.js';
 
 describe('reinicio de navegación administrativa ICMSA', () => {
-  it('muestra exclusivamente Organigrama en el menú administrativo', () => {
-    expect(navigation).toHaveLength(1);
+  it('agrupa Organigrama y Personal en Administración respetando permisos', () => {
+    expect(navigation).toHaveLength(2);
     expect(navigation[0]).toMatchObject({
       path: '/portal/organigrama',
       label: 'Organigrama',
-      group: 'Organización',
+      group: 'Administración',
       permission: 'organization.read',
       type: 'organization',
     });
     const access = {
       role: 'super_admin',
-      permissions: ['organization.read', 'organization.write', 'users.read'],
+      permissions: ['organization.read', 'organization.write', 'employees.read', 'users.read'],
       resources: { processes: { path: '/processes' }, students: { path: '/students' } },
     };
-    expect(visibleNavigation(access).map(item=>item.label)).toEqual(['Organigrama']);
+    expect(visibleNavigation(access).map(item=>item.label)).toEqual(['Organigrama', 'Personal']);
     expect(visibleNavigation({ ...access, permissions: [] })).toEqual([]);
   });
 
