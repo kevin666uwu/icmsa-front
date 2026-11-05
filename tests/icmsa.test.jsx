@@ -10,7 +10,6 @@ import Portal from '../src/domain/Portal.jsx';
 afterEach(()=>vi.unstubAllGlobals());
 const spec={title:'Departamentos',path:'/departments',permission:'organization',fields:{name:{label:'Nombre',type:'text',required:true},active:{label:'Activo',type:'boolean',required:true,default:true}}};
 const access={permissions:['organization.read','organization.write'],resources:{departments:spec}};
-const data={departments:[{id:1,name:'Dirección'}],areas:[{id:2,name:'Área',department_id:1}],positions:[{id:3,name:'Docente',area_id:2,parent_position_id:null},{id:4,name:'Docente',area_id:2,parent_position_id:3}],employees:[{id:5,first_name:'Persona',last_name:'Prueba',status:'active'}],memberships:[{employee_id:5,position_id:3,active:true,is_primary:true}],process_overview:{}};
 const response=payload=>new Response(JSON.stringify(payload),{headers:{'Content-Type':'application/json'}});
 describe('ICMSA institutional domain',()=>{
   it('only exposes navigation authorized by server contracts',()=>{
