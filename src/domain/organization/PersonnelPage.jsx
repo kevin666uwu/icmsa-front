@@ -9,8 +9,11 @@ export default function PersonnelPage({ access }) {
   const employeeSpec = access.resources?.employees;
   const attendanceSpec = access.resources?.attendance_records;
   const specs = useMemo(() => {
-    const { user_id: ACCOUNT, ...basicFields } = employeeSpec?.fields || {};
+    const { user_id: ACCOUNT, first_name, last_name, second_last_name, ...basicFields } = employeeSpec?.fields || {};
     const employees = employeeSpec && { ...employeeSpec, fields: {
+      ...(first_name && { first_name: { ...first_name, label: 'Nombre' } }),
+      ...(last_name && { last_name: { ...last_name, label: 'Primer apellido' } }),
+      ...(second_last_name && { second_last_name: { ...second_last_name, label: 'Segundo apellido' } }),
       ...basicFields, status: { ...basicFields.status, choice_labels: employeeLabels },
     } };
     const attendance = attendanceSpec && { ...attendanceSpec, fields: {

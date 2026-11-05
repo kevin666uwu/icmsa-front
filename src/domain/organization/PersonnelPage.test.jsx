@@ -9,6 +9,7 @@ const employees = { title: 'Personal', path: '/employees', permission: 'employee
   employee_number: { label: 'Número de empleado', type: 'text', required: true },
   status: { label: 'Estado', type: 'choice', choices: ['active', 'inactive'], default: 'active' },
   user_id: { label: 'Usuario relacionado', type: 'reference', reference: 'users' },
+  second_last_name: { label: 'Segundo apellido', type: 'text' },
 } };
 const attendance = { title: 'Asistencia', path: '/attendance', permission: 'attendance', fields: {
   employee_id: { label: 'Empleado', type: 'reference', reference: 'employees', required: true },
@@ -27,13 +28,16 @@ it('crea un expediente sin crear ni pedir una cuenta de acceso', async () => {
   await userEvent.click(await screen.findByRole('button',{name:'Crear primer registro'}));
   const modal = screen.getByRole('dialog');
   await userEvent.type(await within(modal).findByLabelText(/Nombre/),'Andrea');
-  await userEvent.type(within(modal).getByLabelText(/Apellidos/),'Demo');
+  await userEvent.type(within(modal).getByLabelText(/Primer apellido/),'Demo');
+  await userEvent.type(within(modal).getByLabelText(/Segundo apellido/),'Prueba');
+  expect(within(modal).getAllByRole('textbox').slice(0, 3).map(input => input.value)).toEqual(['Andrea', 'Demo', 'Prueba']);
+  expect(within(modal).queryByLabelText(/^Apellidos/)).toBeNull();
   await userEvent.type(within(modal).getByLabelText(/Número de empleado/),'EMP-001');
   expect(within(modal).queryByLabelText(/Usuario relacionado/)).toBeNull();
   await userEvent.click(within(modal).getByRole('button',{name:'Guardar'}));
   const posted = fetcher.mock.calls.find(([,options])=>options.method==='POST');
   expect(posted[0]).toContain('/employees');
-  expect(JSON.parse(posted[1].body)).toEqual({first_name:'Andrea',last_name:'Demo',employee_number:'EMP-001',status:'active'});
+  expect(JSON.parse(posted[1].body)).toEqual({first_name:'Andrea',last_name:'Demo',second_last_name:'Prueba',employee_number:'EMP-001',status:'active'});
 });
 
 it('filtra vacaciones y guarda el día en el historial de asistencia', async () => {
